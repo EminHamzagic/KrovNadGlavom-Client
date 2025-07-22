@@ -41,18 +41,4 @@ export default antfu(
       ],
     },
   },
-  {
-    files: ["**/*.{ts,tsx,js,jsx}"],
-    rules: {
-      "unicorn/filename-case": [
-        "error",
-        {
-          cases: {
-            kebabCase: true,
-          },
-          ignore: ["README.md"],
-        },
-      ],
-    },
-  },
 );
