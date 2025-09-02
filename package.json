@@ -11,9 +11,15 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@react-oauth/google": "^0.12.2",
     "@tailwindcss/vite": "^4.1.11",
+    "axios": "^1.11.0",
+    "js-cookie": "^3.0.5",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-router": "^7.8.2",
+    "sweetalert2": "^11.22.5",
+    "sweetalert2-react-content": "^5.1.0",
     "tailwindcss": "^4.1.11"
   },
   "devDependencies": {

@@ -1,14 +1,20 @@
+import { Route, Routes } from "react-router";
+import LoginPage from "./pages/LoginPage";
+import HomePage from "./pages/HomePage";
+import UserContextProvider from "./context/UserContext";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import { GOOGLE_CLIENT_ID } from "./config";
+
 function App() {
   return (
-    <div className="planel flex-col shadow-md flex items-center justify-center">
-      <h1 className="text-primary">KrovNadGlavom</h1>
-      <h1 className="text-primary">KrovNadGlavom</h1>
-      <h1 className="text-primary">KrovNadGlavom</h1>
-      <div>
-        <input type="text" className="form-input" />
-      </div>
-      <button className="btn btn-primary">Halo</button>
-    </div>
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+      <UserContextProvider>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={<LoginPage />} />
+        </Routes>
+      </UserContextProvider>
+    </GoogleOAuthProvider>
   );
 }
 
