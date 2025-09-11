@@ -1,5 +1,6 @@
 import { useContext, useState } from "react";
-import logo from "/logo-transparent.png";
+import logo from "/KrovNadGlavomLogo.png";
+import backgroundImage from "/LoginBackground.jpg";
 import type { LoginData } from "../types/user";
 import { useNavigate } from "react-router";
 import axios from "axios";
@@ -81,11 +82,14 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex justify-center items-center bg-primary w-full h-screen">
-      <div className="flex bg-white rounded-2xl flex-col justify-center px-6 py-12 lg:px-8 shadow-lg p-6 w-90 sm:w-[30rem]">
+    <div className="flex justify-center items-center w-full h-screen relative">
+      <div className="absolute inset-0">
+        <img src={backgroundImage} alt="image" className="fixed inset-0 h-full w-full object-cover" />
+      </div>
+
+      <div className="flex bg-white rounded-2xl flex-col justify-center px-6 py-12 lg:px-8 shadow-lg p-6 w-90 sm:w-[30rem] z-10">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-          <img src={logo} alt="Your Company" className="mx-auto h-50 w-auto" />
-          <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight">Prijavi se</h2>
+          <img src={logo} alt="KrovNad Glavom" className="mx-auto h-auto w-full" />
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
@@ -110,7 +114,7 @@ export default function LoginPage() {
               <div className="flex items-center justify-between">
                 <label className="text-sm/6 font-medium">Lozinka</label>
                 <div className="text-sm">
-                  <a href="#" tabIndex={-1} className="font-semibold text-indigo-400 hover:text-indigo-300">Zaboravili ste lozinku?</a>
+                  <a href="#" tabIndex={-1} className="font-semibold text-primary-dark-light hover:text-primary">Zaboravili ste lozinku?</a>
                 </div>
               </div>
               <div className="mt-2">
@@ -150,7 +154,7 @@ export default function LoginPage() {
 
           <p className="mt-10 text-center text-sm/6 text-gray-400">
             Nemate profil?
-            <a href="#" className="font-semibold text-indigo-400 hover:text-indigo-300"> Registrujte se sada!</a>
+            <a href="#" className="font-semibold text-primary-dark-light hover:text-primary"> Registrujte se sada!</a>
           </p>
         </div>
       </div>
