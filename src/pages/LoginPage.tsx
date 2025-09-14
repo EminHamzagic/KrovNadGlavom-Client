@@ -1,14 +1,14 @@
 import { useContext, useState } from "react";
 import logo from "/KrovNadGlavomLogo.png";
-import backgroundImage from "/LoginBackground.jpg";
 import type { LoginData } from "../types/user";
 import { useNavigate } from "react-router";
 import axios from "axios";
-import { API_URL } from "../config";
 import { UserContext } from "../context/UserContext";
 import { GoogleLogin } from "@react-oauth/google";
 import type { CredentialResponse } from "@react-oauth/google";
 import { PopupType, useToast } from "../hooks/useToast";
+import { loginUser, loginUserGoogle } from "../services/userService";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function LoginPage() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -18,6 +18,7 @@ export default function LoginPage() {
     password: "",
   });
   const { showToast } = useToast();
+  const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
 
@@ -33,15 +34,13 @@ export default function LoginPage() {
     ));
   };
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const handleLogin = async () => {
     if (loginInput.email !== "" && loginInput.password !== "") {
       try {
         setLoading(true);
-        const { data } = await axios.post(`${API_URL}/Users/login`, loginInput);
+        const data = await loginUser(loginInput);
 
-        setLoginData(data.token, data);
+        setLoginData(data.accessToken ?? "", data.refreshToken ?? "", data);
 
         showToast(PopupType.Success, "Uspešno ste se prijavili");
         navigate("/");
@@ -62,11 +61,9 @@ export default function LoginPage() {
 
   const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
     try {
-      const { data } = await axios.post(`${API_URL}/Users/google`, {
-        idToken: credentialResponse.credential,
-      });
+      const data = await loginUserGoogle(credentialResponse.credential ?? "");
 
-      setLoginData(data.token, data);
+      setLoginData(data.accessToken ?? "", data.refreshToken ?? "", data);
 
       showToast(PopupType.Success, "Uspešno ste se prijavili");
       navigate("/");
@@ -84,7 +81,7 @@ export default function LoginPage() {
   return (
     <div className="flex justify-center items-center w-full h-screen relative">
       <div className="absolute inset-0">
-        <img src={backgroundImage} alt="image" className="fixed inset-0 h-full w-full object-cover" />
+        <img src="/LoginBackground.jpg" alt="image" className="fixed inset-0 h-full w-full object-cover" />
       </div>
 
       <div className="flex bg-white rounded-2xl flex-col justify-center px-6 py-12 lg:px-8 shadow-lg p-6 w-90 sm:w-[30rem] z-10">
@@ -117,22 +114,32 @@ export default function LoginPage() {
                   <a href="#" tabIndex={-1} className="font-semibold text-primary-dark-light hover:text-primary">Zaboravili ste lozinku?</a>
                 </div>
               </div>
-              <div className="mt-2">
+              <div className="mt-2 relative">
                 <input
                   id="password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   name="password"
-                  className="form-input"
+                  className="form-input pr-10"
                   value={loginInput.password}
-                  onChange={(e) => {
-                    setPassword(e.target.value);
+                  onChange={e => setPassword(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter")
+                      handleLogin();
                   }}
                 />
+                <button
+                  type="button"
+                  tabIndex={-1}
+                  className="absolute inset-y-0 right-2 flex items-center px-2 text-gray-500 cursor-pointer"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
               </div>
             </div>
 
             <div>
-              <button onClick={handleLogin} className="btn btn-primary w-full flex justify-center items-center">
+              <button type="button" onClick={handleLogin} className="btn btn-primary w-full flex justify-center items-center">
                 {loading
                   ? (
                       <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>

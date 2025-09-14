@@ -5,6 +5,11 @@ export interface LoginData {
   password: string;
 }
 
+export interface Tokens {
+  accessToken: string;
+  refreshToken: string;
+}
+
 export interface User {
   id: string;
   name: string;

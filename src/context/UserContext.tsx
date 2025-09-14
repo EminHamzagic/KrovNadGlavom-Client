@@ -1,11 +1,12 @@
 import { createContext, useState } from "react";
 import type { ReactNode } from "react";
-import type { User } from "../types/user";
+import type { Tokens, User } from "../types/user";
+import Cookies from "js-cookie";
 
 interface UserContextType {
-  setLoginData: (token: string, user: User) => void;
+  setLoginData: (accessToken: string, refreshToken: string, user: User) => void;
   isUserLogged: () => boolean;
-  token: string;
+  tokens: Tokens;
   logout: () => void;
   getRole: () => string | null;
   getId: () => string | number | null;
@@ -20,14 +21,21 @@ export const UserContext = createContext<UserContextType>({} as UserContextType)
 
 export default function UserContextProvider({ children }: UserContextProviderProps) {
   const [user, setUser] = useState<User>({} as User);
-  const [token, setToken] = useState<string>("");
+  const [tokens, setTokens] = useState<Tokens>({} as Tokens);
 
-  const setLoginData = (token: string, user: User) => {
-    setToken(token);
+  const setLoginData = (accessToken: string, refreshToken: string, user: User) => {
+    setTokens({
+      accessToken,
+      refreshToken,
+    });
     setUser(user);
+
+    Cookies.set("accessToken", accessToken, { expires: 7 });
+    Cookies.set("refreshToken", refreshToken, { expires: 7 });
+    Cookies.set("user", JSON.stringify(user), { expires: 7 });
   };
 
-  const isUserLogged = () => token !== "";
+  const isUserLogged = () => tokens.accessToken !== "";
 
   const getRole = () => {
     const userRole = user.role;
@@ -41,7 +49,7 @@ export default function UserContextProvider({ children }: UserContextProviderPro
 
   const logout = () => {
     setUser({} as User);
-    setToken("");
+    setTokens({} as Tokens);
   };
 
   return (
@@ -49,7 +57,7 @@ export default function UserContextProvider({ children }: UserContextProviderPro
       value={{
         setLoginData,
         isUserLogged,
-        token,
+        tokens,
         logout,
         getRole,
         getId,

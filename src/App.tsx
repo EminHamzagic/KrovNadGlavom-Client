@@ -5,6 +5,7 @@ import UserContextProvider from "./context/UserContext";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { GOOGLE_CLIENT_ID } from "./config";
 import LayoutComponent from "./components/LayoutComponent";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
@@ -12,9 +13,11 @@ function App() {
       <UserContextProvider>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
-          <Route element={<LayoutComponent />}>
-            <Route path="/" element={<HomePage />} />
-            {/* Add more nested routes here that share the layout */}
+
+          <Route element={<ProtectedRoute />}>
+            <Route element={<LayoutComponent />}>
+              <Route path="/" element={<HomePage />} />
+            </Route>
           </Route>
         </Routes>
       </UserContextProvider>
