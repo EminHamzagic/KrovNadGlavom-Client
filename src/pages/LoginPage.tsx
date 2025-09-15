@@ -61,6 +61,7 @@ export default function LoginPage() {
 
   const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
     try {
+      setLoading(true);
       const data = await loginUserGoogle(credentialResponse.credential ?? "");
 
       setLoginData(data.accessToken ?? "", data.refreshToken ?? "", data);
@@ -74,6 +75,7 @@ export default function LoginPage() {
       }
       else {
         showToast(PopupType.Danger, `Unkown error: ${err}`);
+        setLoading(false);
       }
     }
   };
@@ -111,7 +113,7 @@ export default function LoginPage() {
               <div className="flex items-center justify-between">
                 <label className="text-sm/6 font-medium">Lozinka</label>
                 <div className="text-sm">
-                  <a href="#" tabIndex={-1} className="font-semibold text-primary-dark-light hover:text-primary">Zaboravili ste lozinku?</a>
+                  <a href="#" tabIndex={-1} className="font-semibold text-primary-dark-light hover:text-primary transition duration-300">Zaboravili ste lozinku?</a>
                 </div>
               </div>
               <div className="mt-2 relative">
@@ -161,7 +163,7 @@ export default function LoginPage() {
 
           <p className="mt-10 text-center text-sm/6 text-gray-400">
             Nemate profil?
-            <a href="#" className="font-semibold text-primary-dark-light hover:text-primary"> Registrujte se sada!</a>
+            <a href="#" className="font-semibold text-primary-dark-light hover:text-primary transition duration-300"> Registrujte se sada!</a>
           </p>
         </div>
       </div>

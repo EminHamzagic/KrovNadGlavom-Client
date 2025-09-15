@@ -30,9 +30,9 @@ export default function UserContextProvider({ children }: UserContextProviderPro
     });
     setUser(user);
 
-    Cookies.set("accessToken", accessToken, { expires: 7 });
-    Cookies.set("refreshToken", refreshToken, { expires: 7 });
-    Cookies.set("user", JSON.stringify(user), { expires: 7 });
+    Cookies.set("accessToken", accessToken, { expires: 2 / 24 });
+    Cookies.set("refreshToken", refreshToken, { expires: 2 / 24 });
+    Cookies.set("user", JSON.stringify(user), { expires: 2 / 24 });
   };
 
   const isUserLogged = () => tokens.accessToken !== "";

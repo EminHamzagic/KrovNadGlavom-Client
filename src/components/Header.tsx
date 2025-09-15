@@ -1,6 +1,6 @@
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import logo from "/KrovNadGlavomLogo.png";
-import { LogOut, X } from "lucide-react";
+import { Building, Building2, LogOut, MessageSquarePlus, Percent, X } from "lucide-react";
 import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
 
@@ -12,7 +12,13 @@ export default function Header({
   setSidebarOpen: (val: boolean) => void;
 }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const { logout } = useContext(UserContext);
+
+  const isActive = (path: string) => location.pathname.startsWith(path);
+
+  const baseClasses
+    = "flex items-center p-3 cursor-pointer transition-all duration-200 rounded-md w-full";
 
   return (
     <>
@@ -52,13 +58,59 @@ export default function Header({
           className="mx-auto h-20 w-auto mb-5"
         />
         <div className="flex flex-col justify-between h-full">
-          <div>sad</div>
+          <div>
+
+            <button
+              onClick={() => {
+                navigate("/buildings");
+              }}
+              className={`${baseClasses} ${
+                isActive("/buildings") ? "bg-gray-200" : "hover:bg-gray-200"
+              }`}
+            >
+              <Building />
+              <span className="ml-2">Zgrade</span>
+            </button>
+            <button
+              onClick={() => {
+                navigate("/company");
+              }}
+              className={`${baseClasses} ${
+                isActive("/company") ? "bg-gray-200" : "hover:bg-gray-200"
+              }`}
+            >
+              <Building2 />
+              <span className="ml-2">Kompanija</span>
+            </button>
+            <button
+              onClick={() => {
+                navigate("/agency-requests");
+              }}
+              className={`${baseClasses} ${
+                isActive("/agency-requests") ? "bg-gray-200" : "hover:bg-gray-200"
+              }`}
+            >
+              <MessageSquarePlus />
+              <span className="ml-2">Zahtevi agencija</span>
+            </button>
+            <button
+              onClick={() => {
+                navigate("/discount-requests");
+              }}
+              className={`${baseClasses} ${
+                isActive("/discount-requests") ? "bg-gray-200" : "hover:bg-gray-200"
+              }`}
+            >
+              <Percent />
+              <span className="ml-2">Zahtevi za popust</span>
+            </button>
+          </div>
           <button
             onClick={() => {
               logout();
               navigate("/login");
             }}
-            className="flex items-center hover:bg-gray-200 p-3 cursor-pointer transition-all duration-200 rounded-md"
+            className="flex items-center hover:bg-gray-200 p-3 cursor-pointer transition-all duration-200 rounded-md w-full"
           >
             <LogOut color="red" />
             <span className="ml-2 text-red-700">Logout</span>

@@ -6,6 +6,11 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { GOOGLE_CLIENT_ID } from "./config";
 import LayoutComponent from "./components/LayoutComponent";
 import ProtectedRoute from "./components/ProtectedRoute";
+import BuildingsPage from "./pages/BuildingsPage";
+import CompanyPage from "./pages/CompanyPage";
+import AgencyRequestsPage from "./pages/AgencyRequestsPage";
+import DiscountRequestsPage from "./pages/DiscountRequestsPage";
+import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
   return (
@@ -17,8 +22,15 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route element={<LayoutComponent />}>
               <Route path="/" element={<HomePage />} />
+
+              <Route path="/buildings" element={<BuildingsPage />} />
+              <Route path="/company" element={<CompanyPage />} />
+              <Route path="/agency-requests" element={<AgencyRequestsPage />} />
+              <Route path="/discount-requests" element={<DiscountRequestsPage />} />
             </Route>
           </Route>
+
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </UserContextProvider>
     </GoogleOAuthProvider>
