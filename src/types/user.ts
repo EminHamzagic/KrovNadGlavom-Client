@@ -18,8 +18,8 @@ export interface User {
   email: string;
   role: string;
   imageUrl: string;
-  constructionCompanyId: string;
-  agencyId: string;
+  constructionCompanyId?: string;
+  agencyId?: string;
   accessToken?: string;
   refreshToken?: string;
   reservation?: Reservation;

@@ -28,7 +28,6 @@ export interface Building {
 }
 
 export interface BuildingToAdd {
-  id: string;
   companyId: string;
   parcelNumber: string;
   area: number;
@@ -42,7 +41,7 @@ export interface BuildingToAdd {
   longitude: number;
   latitude: number;
   description: string;
-  apartments: ApartmentToAdd[];
-  garages: GarageToAdd[];
+  apartments?: ApartmentToAdd[];
+  garages?: GarageToAdd[];
   priceList: PriceListToAdd;
 }

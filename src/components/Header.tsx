@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router";
 import logo from "/KrovNadGlavomLogo.png";
-import { Building, Building2, LogOut, MessageSquarePlus, Percent, X } from "lucide-react";
+import { Building, Building2, LayoutDashboard, LogOut, MessageSquarePlus, Percent, X } from "lucide-react";
 import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
 
@@ -18,7 +18,7 @@ export default function Header({
   const isActive = (path: string) => location.pathname.startsWith(path);
 
   const baseClasses
-    = "flex items-center p-3 cursor-pointer transition-all duration-200 rounded-md w-full";
+    = "flex items-center p-3 cursor-pointer transition-all duration-200 rounded-md w-full mb-1";
 
   return (
     <>
@@ -55,10 +55,23 @@ export default function Header({
         <img
           src={logo}
           alt="KrovNad Glavom"
-          className="mx-auto h-20 w-auto mb-5"
+          className="mx-auto h-20 w-auto mb-5 cursor-pointer"
+          onClick={() => navigate("/dashboard")}
         />
         <div className="flex flex-col justify-between h-full">
           <div>
+
+            <button
+              onClick={() => {
+                navigate("/dashboard");
+              }}
+              className={`${baseClasses} ${
+                isActive("/dashboard") ? "bg-gray-200" : "hover:bg-gray-200"
+              }`}
+            >
+              <LayoutDashboard />
+              <span className="ml-2">Kontrolna tabla</span>
+            </button>
 
             <button
               onClick={() => {

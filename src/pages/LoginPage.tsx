@@ -43,7 +43,7 @@ export default function LoginPage() {
         setLoginData(data.accessToken ?? "", data.refreshToken ?? "", data);
 
         showToast(PopupType.Success, "Uspešno ste se prijavili");
-        navigate("/");
+        navigate("/dashboard");
       }
       catch (err) {
         if (axios.isAxiosError(err)) {
@@ -67,7 +67,7 @@ export default function LoginPage() {
       setLoginData(data.accessToken ?? "", data.refreshToken ?? "", data);
 
       showToast(PopupType.Success, "Uspešno ste se prijavili");
-      navigate("/");
+      navigate("/dashboard");
     }
     catch (err) {
       if (axios.isAxiosError(err)) {
@@ -141,7 +141,7 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <button type="button" onClick={handleLogin} className="btn btn-primary w-full flex justify-center items-center">
+              <button type="button" onClick={handleLogin} className="btn btn-primary w-full flex justify-center items-center" disabled={loading}>
                 {loading
                   ? (
                       <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
