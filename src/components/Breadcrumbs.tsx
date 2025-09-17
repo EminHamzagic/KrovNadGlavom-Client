@@ -10,7 +10,6 @@ export default function Breadcrumbs() {
     const to = `/${pathnames.slice(0, index + 1).join("/")}`;
     return to;
   });
-
   return (
     <nav className="flex items-center text-md text-gray-600 space-x-2 mb-6">
       <Link to="/dashboard" className="flex items-center hover:underline">
