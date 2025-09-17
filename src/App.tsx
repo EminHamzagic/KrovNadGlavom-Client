@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router";
+import { Navigate, Route, Routes } from "react-router";
 import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
 import UserContextProvider from "./context/UserContext";
@@ -23,6 +23,7 @@ function App() {
 
           <Route element={<ProtectedRoute />}>
             <Route element={<LayoutComponent />}>
+              <Route path="/" element={<Navigate to="/dashboard" replace />} />
               <Route path="/dashboard" element={<HomePage />} />
 
               <Route path="/buildings" element={<BuildingsPage />} />

@@ -35,6 +35,7 @@ export default function CreateBuildingPage() {
   const [startDate, setStartDate] = useState<Date>(new Date());
   const [endDate, setEndDate] = useState<Date>(new Date());
   const [loading, setLoading] = useState<boolean>(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const navigate = useNavigate();
 
   const { showToast } = useToast();
@@ -43,6 +44,10 @@ export default function CreateBuildingPage() {
     setBuildingData(prev => ({
       ...prev,
       [key]: value,
+    }));
+    setErrors(prev => ({
+      ...prev,
+      [key]: "",
     }));
   };
 
@@ -54,6 +59,10 @@ export default function CreateBuildingPage() {
         ...prev.priceList,
         [key]: value,
       },
+    }));
+    setErrors(prev => ({
+      ...prev,
+      [key]: "",
     }));
   };
 
@@ -76,7 +85,54 @@ export default function CreateBuildingPage() {
       : null;
   };
 
+  const validateBuildingData = (data: BuildingToAdd) => {
+    const newErrors: Record<string, string> = {};
+
+    if (!data.parcelNumber.trim())
+      newErrors.parcelNumber = "Broj parcele je obavezan";
+    if (!data.area || data.area <= 0)
+      newErrors.area = "Površina mora biti veća od 0";
+    if (!data.floorCount || data.floorCount <= 0)
+      newErrors.floorCount = "Broj spratova mora biti veći od 0";
+    if (!data.elevatorCount || data.elevatorCount < 0)
+      newErrors.elevatorCount = "Broj liftova ne može biti negativan";
+    if (!data.garageSpotCount || data.garageSpotCount < 0)
+      newErrors.garageSpotCount = "Broj parking mesta u garaži ne može biti negativan";
+    if (!data.startDate)
+      newErrors.startDate = "Datum početka je obavezan";
+    if (!data.endDate)
+      newErrors.endDate = "Datum završetka je obavezan";
+    if (!data.city.trim())
+      newErrors.city = "Grad je obavezan";
+    if (!data.address.trim())
+      newErrors.address = "Adresa je obavezna";
+    if (!data.longitude)
+      newErrors.longitude = "Geografska dužina je obavezna";
+    if (!data.latitude)
+      newErrors.latitude = "Geografska širina je obavezna";
+    if (!data.priceList.pricePerM2 || data.priceList.pricePerM2 <= 0)
+      newErrors.pricePerM2 = "Cena po m² je obavezna";
+    if (!data.priceList.penaltyPerM2 || data.priceList.penaltyPerM2 <= 0)
+      newErrors.penaltyPerM2 = "Kazna po m² je obavezna";
+
+    return newErrors;
+  };
+
   const handleBuildingCreate = async () => {
+    const validationErrors = validateBuildingData({
+      ...buildingData,
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString(),
+    });
+
+    if (Object.keys(validationErrors).length > 0) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      setErrors(validationErrors);
+      return;
+    }
+
+    setErrors({});
+
     setBuildingData(prev => ({
       ...prev,
       startDate: startDate.toISOString(),
@@ -112,8 +168,8 @@ export default function CreateBuildingPage() {
       <p className="text-2xl">Informacije o zgradi</p>
 
       <div className="w-full grid grid-cols-1 sm:grid-cols-4 mt-4 gap-5">
-        <div className="col-span-1 sm:col-span-2">
-          <label>Broj parcele:</label>
+        <div className={`col-span-1 sm:col-span-2 ${errors.parcelNumber && "has-error"}`}>
+          <label className="form-label">Broj parcele:</label>
           <input
             type="text"
             className="form-input"
@@ -121,9 +177,12 @@ export default function CreateBuildingPage() {
             value={buildingData.parcelNumber}
             onChange={e => handleChange("parcelNumber", e.target.value)}
           />
+          {errors.parcelNumber && (
+            <p className="text-danger text-sm mt-1">{errors.parcelNumber}</p>
+          )}
         </div>
-        <div className="col-span-1 sm:col-span-2">
-          <label>Površina placa:</label>
+        <div className={`col-span-1 sm:col-span-2 ${errors.area && "has-error"}`}>
+          <label className="form-label">Površina placa:</label>
           <input
             type="text"
             className="form-input"
@@ -131,11 +190,14 @@ export default function CreateBuildingPage() {
             value={buildingData.area}
             onChange={e => handleChange("area", Number.parseFloat(e.target.value) || 0)}
           />
+          {errors.area && (
+            <p className="text-danger text-sm mt-1">{errors.area}</p>
+          )}
         </div>
 
         <div className="col-span-1 sm:col-span-4 grid grid-cols-1 sm:grid-cols-3 gap-5">
-          <div className="col-span-1">
-            <label>Broj spratova:</label>
+          <div className={`col-span-1 ${errors.floorCount && "has-error"}`}>
+            <label className="form-label">Broj spratova:</label>
             <input
               type="text"
               className="form-input"
@@ -143,9 +205,12 @@ export default function CreateBuildingPage() {
               value={buildingData.floorCount}
               onChange={e => handleChange("floorCount", Number.parseInt(e.target.value) || 0)}
             />
+            {errors.floorCount && (
+              <p className="text-danger text-sm mt-1">{errors.floorCount}</p>
+            )}
           </div>
-          <div className="col-span-1">
-            <label>Broj liftova:</label>
+          <div className={`col-span-1 ${errors.elevatorCount && "has-error"}`}>
+            <label className="form-label">Broj liftova:</label>
             <input
               type="text"
               className="form-input"
@@ -153,9 +218,12 @@ export default function CreateBuildingPage() {
               value={buildingData.elevatorCount}
               onChange={e => handleChange("elevatorCount", Number.parseInt(e.target.value) || 0)}
             />
+            {errors.elevatorCount && (
+              <p className="text-danger text-sm mt-1">{errors.elevatorCount}</p>
+            )}
           </div>
-          <div className="col-span-1">
-            <label>Broj garažnih mesta:</label>
+          <div className={`col-span-1 ${errors.garageSpotCount && "has-error"}`}>
+            <label className="form-label">Broj garažnih mesta:</label>
             <input
               type="text"
               className="form-input"
@@ -163,11 +231,14 @@ export default function CreateBuildingPage() {
               value={buildingData.garageSpotCount}
               onChange={e => handleChange("garageSpotCount", Number.parseInt(e.target.value) || 0)}
             />
+            {errors.garageSpotCount && (
+              <p className="text-danger text-sm mt-1">{errors.garageSpotCount}</p>
+            )}
           </div>
         </div>
 
-        <div className="col-span-1 sm:col-span-2">
-          <label>Datum početka izgradnje:</label>
+        <div className={`col-span-1 sm:col-span-2 ${errors.startDate && "has-error"}`}>
+          <label className="form-label">Datum početka izgradnje:</label>
           <DatePicker
             selected={startDate}
             onChange={(date: Date | null) => {
@@ -178,9 +249,12 @@ export default function CreateBuildingPage() {
             wrapperClassName="w-full"
             dateFormat="dd.MM.yyyy"
           />
+          {errors.startDate && (
+            <p className="text-danger text-sm mt-1">{errors.startDate}</p>
+          )}
         </div>
-        <div className="col-span-1 sm:col-span-2">
-          <label>Datum završetka izgradnje:</label>
+        <div className={`col-span-1 sm:col-span-2 ${errors.endDate && "has-error"}`}>
+          <label className="form-label">Datum završetka izgradnje:</label>
           <DatePicker
             selected={endDate}
             onChange={(date: Date | null) => {
@@ -191,10 +265,13 @@ export default function CreateBuildingPage() {
             wrapperClassName="w-full"
             dateFormat="dd.MM.yyyy"
           />
+          {errors.endDate && (
+            <p className="text-danger text-sm mt-1">{errors.endDate}</p>
+          )}
         </div>
 
-        <div className="col-span-1 sm:col-span-2">
-          <label>Grad:</label>
+        <div className={`col-span-1 sm:col-span-2 ${errors.city && "has-error"}`}>
+          <label className="form-label">Grad:</label>
           <input
             type="text"
             className="form-input"
@@ -202,9 +279,12 @@ export default function CreateBuildingPage() {
             value={buildingData.city}
             onChange={e => handleChange("city", e.target.value)}
           />
+          {errors.city && (
+            <p className="text-danger text-sm mt-1">{errors.city}</p>
+          )}
         </div>
-        <div className="col-span-1 sm:col-span-2">
-          <label>Adresa:</label>
+        <div className={`col-span-1 sm:col-span-2 ${errors.address && "has-error"}`}>
+          <label className="form-label">Adresa:</label>
           <input
             type="text"
             className="form-input"
@@ -212,10 +292,13 @@ export default function CreateBuildingPage() {
             value={buildingData.address}
             onChange={e => handleChange("address", e.target.value)}
           />
+          {errors.address && (
+            <p className="text-danger text-sm mt-1">{errors.address}</p>
+          )}
         </div>
 
-        <div className="col-span-1 sm:col-span-2">
-          <label>Cena po kvadratu:</label>
+        <div className={`col-span-1 sm:col-span-2 ${errors.pricePerM2 && "has-error"}`}>
+          <label className="form-label">Cena po kvadratu:</label>
           <input
             type="text"
             className="form-input"
@@ -223,9 +306,12 @@ export default function CreateBuildingPage() {
             value={buildingData.priceList.pricePerM2}
             onChange={e => handlePriceListChange("pricePerM2", Number.parseFloat(e.target.value) || 0)}
           />
+          {errors.pricePerM2 && (
+            <p className="text-danger text-sm mt-1">{errors.pricePerM2}</p>
+          )}
         </div>
-        <div className="col-span-1 sm:col-span-2">
-          <label>Cena penala za kašnjenje po kvadratu:</label>
+        <div className={`col-span-1 sm:col-span-2 ${errors.penaltyPerM2 && "has-error"}`}>
+          <label className="form-label">Cena penala za kašnjenje po kvadratu:</label>
           <input
             type="text"
             className="form-input"
@@ -233,6 +319,9 @@ export default function CreateBuildingPage() {
             value={buildingData.priceList.penaltyPerM2}
             onChange={e => handlePriceListChange("penaltyPerM2", Number.parseFloat(e.target.value) || 0)}
           />
+          {errors.penaltyPerM2 && (
+            <p className="text-danger text-sm mt-1">{errors.penaltyPerM2}</p>
+          )}
         </div>
 
         <div className="sm:col-span-4 col-span-1 mt-6">

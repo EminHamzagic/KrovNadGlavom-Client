@@ -48,7 +48,7 @@ export default function BuildingsPage() {
   return (
     <div className="planel flex-col shadow-md flex items-center justify-center bg-white rounded-md p-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 w-full">
-        <div className="col-span-1 col-start-3 flex justify-end items-center">
+        <div className="col-span-1 sm:col-start-3 flex justify-end items-center">
           <button className="btn btn-outline-primary text-xl" onClick={() => navigate("/buildings/create")}>+ Dodaj zgradu</button>
         </div>
         {

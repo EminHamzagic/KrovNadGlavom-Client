@@ -78,6 +78,9 @@ export default function LoginPage() {
         setLoading(false);
       }
     }
+    finally {
+      setLoading(false);
+    }
   };
 
   return (
