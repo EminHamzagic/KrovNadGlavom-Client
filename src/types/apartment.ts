@@ -1,3 +1,4 @@
+import type { OrientationEnum } from "../utils/orientation";
 import type { Agency } from "./agency";
 import type { Building } from "./building";
 
@@ -18,6 +19,7 @@ export interface Apartment {
 }
 
 export interface ApartmentToAdd {
+  id: string;
   buildingId: string;
   apartmentNumber: string;
   area: number;
@@ -26,18 +28,4 @@ export interface ApartmentToAdd {
   orientation: OrientationEnum;
   floor: number;
   isAvailable: boolean;
-  isDeleted: boolean;
-  isReserved: boolean;
-  building?: Building;
-}
-
-export enum OrientationEnum {
-  North = "north",
-  South = "south",
-  East = "east",
-  West = "west",
-  Northeast = "northeast",
-  Northwest = "northwest",
-  Southeast = "southeast",
-  Southwest = "southwest",
 }

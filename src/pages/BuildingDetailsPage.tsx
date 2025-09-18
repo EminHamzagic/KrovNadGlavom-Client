@@ -1,19 +1,24 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import type { Building } from "../types/building";
-import { getBuildingById } from "../services/buildingService";
+import { deleteBuilding, getBuildingById } from "../services/buildingService";
 import { PopupType, useToast } from "../hooks/useToast";
 import axios from "axios";
 import FullScreenLoader from "../components/FullScreenLoader";
 import { formatDate } from "../utils/dateFormatter";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import BuildingApartments from "../components/Building/BuildingApartments";
+import { PenLine, Trash } from "lucide-react";
+import Modal from "../components/Modal";
 
 export default function BuildingDetailsPage() {
   const { buildingId } = useParams<{ buildingId: string }>();
   const [building, setBuilding] = useState<Building>({} as Building);
   const [loading, setLoading] = useState<boolean>(false);
+  const [loadingModal, setLoadingModal] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
+  const navigate = useNavigate();
   const { showToast } = useToast();
 
   useEffect(() => {
@@ -41,6 +46,28 @@ export default function BuildingDetailsPage() {
     fetchBuilding();
   }, []);
 
+  const handleDelete = async () => {
+    if (buildingId) {
+      try {
+        setLoadingModal(true);
+        await deleteBuilding(buildingId);
+        showToast(PopupType.Success, "Zgrada je uspešno izbrisana");
+        navigate("/buildings");
+      }
+      catch (err) {
+        if (axios.isAxiosError(err)) {
+          showToast(PopupType.Danger, err.response?.data || err);
+        }
+        else {
+          showToast(PopupType.Danger, `Unkown error: ${err}`);
+        }
+      }
+      finally {
+        setLoadingModal(false);
+      }
+    }
+  };
+
   if (loading) {
     return <FullScreenLoader />;
   }
@@ -48,7 +75,13 @@ export default function BuildingDetailsPage() {
   return (
     <>
       <div className="planel shadow-md flex-col flex justify-center bg-white rounded-md p-4 mb-10">
-        <h1 className="text-3xl mb-10">Detalji zgrade</h1>
+        <div className="flex justify-between items-center mb-10">
+          <h1 className="text-3xl">Detalji zgrade</h1>
+          <div className="flex gap-2">
+            <button className="btn btn-primary px-3"><PenLine size={18} /></button>
+            <button className="btn btn-danger px-3" onClick={() => setIsOpen(true)}><Trash size={18} /></button>
+          </div>
+        </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 w-full">
           <div className="col-span-2 sm:col-span-3 grid grid-cols-2 sm:grid-cols-3">
             <div className="col-span-1 flex flex-col mb-3">
@@ -142,7 +175,12 @@ export default function BuildingDetailsPage() {
         </div>
       </div>
 
-      <BuildingApartments existingApartments={building.apartments ?? []} />
+      <BuildingApartments apartments={building.apartments ?? []} />
+      <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} title="Brisanje zgrade" onConfirm={handleDelete} loading={loadingModal}>
+        <div>
+          <p>Da li ste sigurni da želite da izbrišete ovu zgradu?</p>
+        </div>
+      </Modal>
     </>
   );
 }

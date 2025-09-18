@@ -13,6 +13,7 @@ interface ModalProps {
   loading?: boolean;
   footer?: boolean;
   children: ReactNode;
+  size?: string;
 }
 
 export default function Modal({
@@ -24,11 +25,12 @@ export default function Modal({
   closeText = "Otkaži",
   loading = false,
   footer = true,
+  size = "md",
   children,
 }: ModalProps) {
   return (
     <Transition appear show={isOpen} as={Fragment}>
-      <Dialog as="div" className="relative z-50" onClose={onClose}>
+      <Dialog as="div" className="relative z-[1000]" onClose={onClose}>
         {/* Overlay */}
         <Transition.Child
           as={Fragment}
@@ -54,10 +56,10 @@ export default function Modal({
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-md transform rounded-xl bg-white p-6 shadow-xl transition-all">
+              <Dialog.Panel className={`w-full max-w-${size} transform rounded-xl bg-white p-6 shadow-xl transition-all`}>
                 <Dialog.Title
                   as="h3"
-                  className="text-2xl leading-6 text-gray-900 mb-4 flex justify-between items-center"
+                  className="text-2xl leading-6 text-gray-900 mb-10 flex justify-between items-center"
                 >
                   {title}
                   <div className="hover:bg-gray-300 cursor-pointer transition duration-300 rounded-full w-8 h-8 flex justify-center items-center" onClick={onClose}>
@@ -66,7 +68,7 @@ export default function Modal({
                 </Dialog.Title>
 
                 {/* Body */}
-                <div className="mb-6">{children}</div>
+                <div className="mb-10">{children}</div>
 
                 {/* Footer */}
                 {footer && (

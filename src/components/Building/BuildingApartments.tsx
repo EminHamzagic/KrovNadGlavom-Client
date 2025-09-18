@@ -1,13 +1,13 @@
 import { useState } from "react";
 import type { Apartment } from "../../types/apartment";
 import Modal from "../Modal";
+import { getOrientationLabel } from "../../utils/orientation";
 
 interface Props {
-  existingApartments: Apartment[];
+  apartments: Apartment[];
 }
 
-export default function BuildingApartments({ existingApartments }: Props) {
-  const [apartments, setApartments] = useState<Apartment[]>(existingApartments);
+export default function BuildingApartments({ apartments }: Props) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selectedApartment, setSelectedApartment] = useState<Apartment | undefined>();
 
@@ -19,7 +19,7 @@ export default function BuildingApartments({ existingApartments }: Props) {
           <button className="btn btn-outline-primary">+ Dodaj stanove</button>
         </div>
 
-        {apartments.length
+        {apartments && apartments.length
           ? (
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-5">
                 {apartments.map((item, index) => (
@@ -81,7 +81,11 @@ export default function BuildingApartments({ existingApartments }: Props) {
           </div>
           <div className="mb-2">
             <span className="font-bold whitespace-nowrap">Orijentacija: </span>
-            {selectedApartment?.balconyCount}
+            {getOrientationLabel(selectedApartment?.orientation)}
+          </div>
+          <div className="mb-2">
+            <span className="font-bold whitespace-nowrap">Status: </span>
+            <span className={`${selectedApartment?.isAvailable ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"} text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm`}>{selectedApartment?.isAvailable ? "Slobodan" : "Zauzet"}</span>
           </div>
         </div>
       </Modal>

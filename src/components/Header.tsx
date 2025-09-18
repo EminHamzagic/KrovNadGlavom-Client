@@ -64,6 +64,7 @@ export default function Header({
             <button
               onClick={() => {
                 navigate("/dashboard");
+                setSidebarOpen(false);
               }}
               className={`${baseClasses} ${
                 isActive("/dashboard") ? "bg-gray-200" : "hover:bg-gray-200"
@@ -76,6 +77,7 @@ export default function Header({
             <button
               onClick={() => {
                 navigate("/buildings");
+                setSidebarOpen(false);
               }}
               className={`${baseClasses} ${
                 isActive("/buildings") ? "bg-gray-200" : "hover:bg-gray-200"
@@ -87,6 +89,7 @@ export default function Header({
             <button
               onClick={() => {
                 navigate("/company");
+                setSidebarOpen(false);
               }}
               className={`${baseClasses} ${
                 isActive("/company") ? "bg-gray-200" : "hover:bg-gray-200"
@@ -98,6 +101,7 @@ export default function Header({
             <button
               onClick={() => {
                 navigate("/agency-requests");
+                setSidebarOpen(false);
               }}
               className={`${baseClasses} ${
                 isActive("/agency-requests") ? "bg-gray-200" : "hover:bg-gray-200"
@@ -109,6 +113,7 @@ export default function Header({
             <button
               onClick={() => {
                 navigate("/discount-requests");
+                setSidebarOpen(false);
               }}
               className={`${baseClasses} ${
                 isActive("/discount-requests") ? "bg-gray-200" : "hover:bg-gray-200"

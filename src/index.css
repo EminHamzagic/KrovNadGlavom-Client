@@ -15,7 +15,7 @@
 
   --color-danger: #d4483b;
   --color-danger-light: #d4483b;
-  --color-danger-dark-light: #d4483b;
+  --color-danger-dark-light: #ad3a2f;
 
   --color-warning: #af4133;
   --color-warning-light: #af4133;
@@ -294,6 +294,9 @@ hover:text-primary hover:before:!bg-primary dark:before:bg-gray-500 dark:hover:b
 
   .btn-danger {
     @apply border-danger bg-danger text-white shadow-danger/60;
+  }
+  .btn-danger:hover {
+    @apply border-danger-dark-light bg-danger-dark-light text-white shadow-danger/60;
   }
   .btn-outline-danger {
     @apply border-danger text-danger shadow-none hover:bg-danger hover:text-white;

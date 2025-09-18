@@ -22,3 +22,10 @@ export async function createBuiding(
   const { data } = await apiClient.post<string>(`${API_URL}/Buildings`, buildingData);
   return data;
 }
+
+export async function deleteBuilding(
+  buildingId: string,
+): Promise<Building> {
+  const { data } = await apiClient.delete<Building>(`${API_URL}/Buildings/${buildingId}`);
+  return data;
+}
