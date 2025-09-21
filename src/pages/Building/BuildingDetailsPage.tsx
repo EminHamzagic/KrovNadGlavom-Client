@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import type { Building } from "../types/building";
-import { deleteBuilding, getBuildingById } from "../services/buildingService";
-import { PopupType, useToast } from "../hooks/useToast";
+import type { Building } from "../../types/building";
+import { deleteBuilding, getBuildingById } from "../../services/buildingService";
+import { PopupType, useToast } from "../../hooks/useToast";
 import axios from "axios";
-import FullScreenLoader from "../components/FullScreenLoader";
-import { formatDate } from "../utils/dateFormatter";
+import FullScreenLoader from "../../components/FullScreenLoader";
+import { formatDate } from "../../utils/dateFormatter";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
-import BuildingApartments from "../components/Building/BuildingApartments";
+import BuildingApartments from "../../components/Building/BuildingApartments";
 import { PenLine, Trash } from "lucide-react";
-import Modal from "../components/Modal";
+import Modal from "../../components/Modal";
 
 export default function BuildingDetailsPage() {
   const { buildingId } = useParams<{ buildingId: string }>();
@@ -78,7 +78,7 @@ export default function BuildingDetailsPage() {
         <div className="flex justify-between items-center mb-10">
           <h1 className="text-3xl">Detalji zgrade</h1>
           <div className="flex gap-2">
-            <button className="btn btn-primary px-3"><PenLine size={18} /></button>
+            <button className="btn btn-primary px-3" onClick={() => navigate(`/buildings/${building.id}/edit`)}><PenLine size={18} /></button>
             <button className="btn btn-danger px-3" onClick={() => setIsOpen(true)}><Trash size={18} /></button>
           </div>
         </div>

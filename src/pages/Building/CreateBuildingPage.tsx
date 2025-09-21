@@ -1,38 +1,43 @@
 import { useContext, useState } from "react";
-import type { BuildingToAdd } from "../types/building";
+import type { Building, BuildingToAdd } from "../../types/building";
 import DatePicker from "react-datepicker";
 import { MapContainer, TileLayer } from "react-leaflet";
-import MapSearchControl from "../components/MapSearchControl";
-import { UserContext } from "../context/UserContext";
-import { createBuiding } from "../services/buildingService";
-import { PopupType, useToast } from "../hooks/useToast";
+import MapSearchControl from "../../components/MapSearchControl";
+import { UserContext } from "../../context/UserContext";
+import { createBuiding, editBuilding } from "../../services/buildingService";
+import { PopupType, useToast } from "../../hooks/useToast";
 import axios from "axios";
 import { useNavigate } from "react-router";
-import SetBuildingApartments from "../components/Apartment/SetBuildingApartments";
-import type { ApartmentToAdd } from "../types/apartment";
-import LocationMarker from "../components/LocationMarker";
+import SetBuildingApartments from "../../components/Apartment/SetBuildingApartments";
+import type { ApartmentToAdd } from "../../types/apartment";
+import LocationMarker from "../../components/LocationMarker";
+import Stepper from "../../components/Stepper";
 
-export default function CreateBuildingPage() {
+interface Props {
+  building?: Building;
+}
+
+export default function CreateBuildingPage({ building }: Props) {
   const { user } = useContext(UserContext);
   const [buildingData, setBuildingData] = useState<BuildingToAdd>({
     companyId: user.constructionCompanyId ?? "",
-    parcelNumber: "",
-    area: 0,
-    floorCount: 0,
-    elevatorCount: 0,
-    garageSpotCount: 0,
-    startDate: "",
-    endDate: "",
-    city: "",
-    address: "",
-    longitude: 0,
-    latitude: 0,
-    description: "",
+    parcelNumber: building?.parcelNumber ?? "",
+    area: building?.area ?? 0,
+    floorCount: building?.floorCount ?? 0,
+    elevatorCount: building?.elevatorCount ?? 0,
+    garageSpotCount: building?.garageSpotCount ?? 0,
+    startDate: building?.startDate ?? "",
+    endDate: building?.endDate ?? "",
+    city: building?.city ?? "",
+    address: building?.address ?? "",
+    longitude: building?.longitude ?? 0,
+    latitude: building?.latitude ?? 0,
+    description: building?.description ?? "",
     apartments: [],
     garages: [],
     priceList: {
-      pricePerM2: 0,
-      penaltyPerM2: 0,
+      pricePerM2: building?.priceList?.pricePerM2 ?? 0,
+      penaltyPerM2: building?.priceList?.penaltyPerM2 ?? 0,
     },
   });
   const [apartments, setApartments] = useState<ApartmentToAdd[]>([]);
@@ -44,6 +49,11 @@ export default function CreateBuildingPage() {
   const navigate = useNavigate();
 
   const { showToast } = useToast();
+
+  const steps = [
+    { id: 1, label: "Informacije" },
+    { id: 2, label: "Stanovi" },
+  ];
 
   const handleChange = (key: keyof BuildingToAdd, value: any) => {
     setBuildingData(prev => ({
@@ -155,8 +165,44 @@ export default function CreateBuildingPage() {
     }
   };
 
+  const handleBuildingEdit = async () => {
+    if (building) {
+      setBuildingData(prev => ({
+        ...prev,
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
+      }));
+
+      const sendData = {
+        ...buildingData,
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
+      } as BuildingToAdd;
+
+      try {
+        setLoading(true);
+        await editBuilding(sendData, building?.id);
+
+        showToast(PopupType.Success, "Uspešno ste izmenili zgradu");
+        navigate(`/buildings/${building?.id}`);
+      }
+      catch (err) {
+        if (axios.isAxiosError(err)) {
+          showToast(PopupType.Danger, err.response?.data);
+        }
+        else {
+          showToast(PopupType.Danger, `Unkown error: ${err}`);
+        }
+      }
+      finally {
+        setLoading(false);
+      }
+    }
+  };
+
   return (
     <div className="planel flex-col shadow-md flex justify-center bg-white rounded-md p-4">
+      <Stepper step={step} stepArray={steps} />
       {step === 1 && (
         <div className="flex flex-col justify-center">
           <p className="text-2xl">Informacije o zgradi</p>
@@ -291,32 +337,36 @@ export default function CreateBuildingPage() {
               )}
             </div>
 
-            <div className={`col-span-1 sm:col-span-2 ${errors.pricePerM2 && "has-error"}`}>
-              <label className="form-label">Cena po kvadratu:</label>
-              <input
-                type="text"
-                className="form-input"
-                placeholder="Unesite cenu stanova po kvadratu"
-                value={buildingData.priceList.pricePerM2}
-                onChange={e => handlePriceListChange("pricePerM2", Number.parseFloat(e.target.value) || 0)}
-              />
-              {errors.pricePerM2 && (
-                <p className="text-danger text-sm mt-1">{errors.pricePerM2}</p>
-              )}
-            </div>
-            <div className={`col-span-1 sm:col-span-2 ${errors.penaltyPerM2 && "has-error"}`}>
-              <label className="form-label">Cena penala za kašnjenje po kvadratu:</label>
-              <input
-                type="text"
-                className="form-input"
-                placeholder="Unesite cena penala za kašnjenje po kvadratu stana"
-                value={buildingData.priceList.penaltyPerM2}
-                onChange={e => handlePriceListChange("penaltyPerM2", Number.parseFloat(e.target.value) || 0)}
-              />
-              {errors.penaltyPerM2 && (
-                <p className="text-danger text-sm mt-1">{errors.penaltyPerM2}</p>
-              )}
-            </div>
+            {!building && (
+              <>
+                <div className={`col-span-1 sm:col-span-2 ${errors.pricePerM2 && "has-error"}`}>
+                  <label className="form-label">Cena po kvadratu:</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder="Unesite cenu stanova po kvadratu"
+                    value={buildingData.priceList.pricePerM2}
+                    onChange={e => handlePriceListChange("pricePerM2", Number.parseFloat(e.target.value) || 0)}
+                  />
+                  {errors.pricePerM2 && (
+                    <p className="text-danger text-sm mt-1">{errors.pricePerM2}</p>
+                  )}
+                </div>
+                <div className={`col-span-1 sm:col-span-2 ${errors.penaltyPerM2 && "has-error"}`}>
+                  <label className="form-label">Cena penala za kašnjenje po kvadratu:</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder="Unesite cena penala za kašnjenje po kvadratu stana"
+                    value={buildingData.priceList.penaltyPerM2}
+                    onChange={e => handlePriceListChange("penaltyPerM2", Number.parseFloat(e.target.value) || 0)}
+                  />
+                  {errors.penaltyPerM2 && (
+                    <p className="text-danger text-sm mt-1">{errors.penaltyPerM2}</p>
+                  )}
+                </div>
+              </>
+            )}
 
             <div className="sm:col-span-4 col-span-1 mt-6">
               <label>Odaberite lokaciju na mapi:</label>
@@ -395,7 +445,19 @@ export default function CreateBuildingPage() {
                 </button>
               </div>
             )
-          : <button className="btn btn-primary sm:col-start-4" onClick={goNextStep}>Dalje</button>}
+          : building
+            ? (
+                <button className="btn btn-primary sm:col-start-4" onClick={handleBuildingEdit}>
+                  {loading
+                    ? (
+                        <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                      )
+                    : (
+                        "Izmeni"
+                      )}
+                </button>
+              )
+            : <button className="btn btn-primary sm:col-start-4" onClick={goNextStep}>Dalje</button>}
       </div>
     </div>
   );

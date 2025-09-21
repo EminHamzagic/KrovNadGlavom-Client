@@ -23,6 +23,14 @@ export async function createBuiding(
   return data;
 }
 
+export async function editBuilding(
+  buildingData: BuildingToAdd,
+  id: string,
+): Promise<Building> {
+  const { data } = await apiClient.put<Building>(`${API_URL}/Buildings/${id}`, buildingData);
+  return data;
+}
+
 export async function deleteBuilding(
   buildingId: string,
 ): Promise<Building> {

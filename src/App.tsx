@@ -6,13 +6,14 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { GOOGLE_CLIENT_ID } from "./config";
 import LayoutComponent from "./components/LayoutComponent";
 import ProtectedRoute from "./components/ProtectedRoute";
-import BuildingsPage from "./pages/BuildingsPage";
 import CompanyPage from "./pages/CompanyPage";
 import AgencyRequestsPage from "./pages/AgencyRequestsPage";
 import DiscountRequestsPage from "./pages/DiscountRequestsPage";
 import NotFoundPage from "./pages/NotFoundPage";
-import BuildingDetailsPage from "./pages/BuildingDetailsPage";
-import CreateBuildingPage from "./pages/CreateBuildingPage";
+import BuildingDetailsPage from "./pages/Building/BuildingDetailsPage";
+import CreateBuildingPage from "./pages/Building/CreateBuildingPage";
+import BuildingsPage from "./pages/Building/BuildingsPage";
+import BuildingEditPage from "./pages/Building/BuildingEditPage";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
 
               <Route path="/buildings" element={<BuildingsPage />} />
               <Route path="/buildings/:buildingId" element={<BuildingDetailsPage />} />
+              <Route path="/buildings/:buildingId/edit" element={<BuildingEditPage />} />
               <Route path="/buildings/create" element={<CreateBuildingPage />} />
 
               <Route path="/company" element={<CompanyPage />} />

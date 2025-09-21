@@ -1,12 +1,17 @@
 import { useContext, useEffect, useState } from "react";
-import { UserContext } from "../context/UserContext";
-import type { Building } from "../types/building";
-import { getBuildings } from "../services/buildingService";
+// import { UserContext } from "../context/UserContext";
+// import type { Building } from "../types/building";
+// import { getBuildings } from "../services/buildingService";
 import axios from "axios";
-import { PopupType, useToast } from "../hooks/useToast";
-import FullScreenLoader from "../components/FullScreenLoader";
+// import { PopupType, useToast } from "../hooks/useToast";
+// import FullScreenLoader from "../components/FullScreenLoader";
 import { Building as BuildingIcon } from "lucide-react";
 import { useNavigate } from "react-router";
+import { UserContext } from "../../context/UserContext";
+import type { Building } from "../../types/building";
+import { PopupType, useToast } from "../../hooks/useToast";
+import { getBuildings } from "../../services/buildingService";
+import FullScreenLoader from "../../components/FullScreenLoader";
 
 export default function BuildingsPage() {
   const { user } = useContext(UserContext);

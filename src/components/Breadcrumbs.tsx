@@ -1,5 +1,5 @@
 import { ChevronRight, Home } from "lucide-react";
-import { Link, useLocation } from "react-router";
+import { Link, matchPath, useLocation } from "react-router";
 import { breadcrumbConfig } from "../utils/breadcrumbConfig";
 
 export default function Breadcrumbs() {
@@ -7,9 +7,9 @@ export default function Breadcrumbs() {
   const pathnames = location.pathname.split("/").filter(Boolean);
 
   const crumbs = pathnames.map((_, index) => {
-    const to = `/${pathnames.slice(0, index + 1).join("/")}`;
-    return to;
+    return `/${pathnames.slice(0, index + 1).join("/")}`;
   });
+
   return (
     <nav className="flex items-center text-md text-gray-600 space-x-2 mb-6">
       <Link to="/dashboard" className="flex items-center hover:underline">
@@ -19,18 +19,24 @@ export default function Breadcrumbs() {
 
       {crumbs.map((path, index) => {
         const isLast = index === crumbs.length - 1;
-        const config = breadcrumbConfig[path];
+
+        // Find a matching pattern in breadcrumbConfig
+        const matchPattern = Object.keys(breadcrumbConfig).find(pattern =>
+          matchPath({ path: pattern, end: true }, path),
+        );
+
+        const label = matchPattern ? breadcrumbConfig[matchPattern].label : "Detalji";
 
         return (
           <div key={path} className="flex items-center space-x-2">
             <ChevronRight size={14} className="text-gray-400" />
             {isLast
               ? (
-                  <span className="font-medium">{config?.label ?? "Detalji"}</span>
+                  <span className="font-medium">{label}</span>
                 )
               : (
                   <Link to={path} className="hover:underline">
-                    {config?.label ?? "Detalji"}
+                    {label}
                   </Link>
                 )}
           </div>
