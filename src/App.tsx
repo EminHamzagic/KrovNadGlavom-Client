@@ -14,6 +14,7 @@ import BuildingDetailsPage from "./pages/Building/BuildingDetailsPage";
 import CreateBuildingPage from "./pages/Building/CreateBuildingPage";
 import BuildingsPage from "./pages/Building/BuildingsPage";
 import BuildingEditPage from "./pages/Building/BuildingEditPage";
+import RegisterPage from "./pages/RegisterPage";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
       <UserContextProvider>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
 
           <Route element={<ProtectedRoute />}>
             <Route element={<LayoutComponent />}>

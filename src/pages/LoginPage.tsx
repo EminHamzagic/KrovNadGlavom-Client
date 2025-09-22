@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import logo from "/KrovNadGlavomLogo.png";
 import type { LoginData } from "../types/user";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import axios from "axios";
 import { UserContext } from "../context/UserContext";
 import { GoogleLogin } from "@react-oauth/google";
@@ -104,6 +104,7 @@ export default function LoginPage() {
                   type="email"
                   name="email"
                   className="form-input"
+                  placeholder="Unesite email"
                   value={loginInput.email}
                   onChange={(e) => {
                     setEmail(e.target.value);
@@ -125,6 +126,7 @@ export default function LoginPage() {
                   type={showPassword ? "text" : "password"}
                   name="password"
                   className="form-input pr-10"
+                  placeholder="Unesite lozinku"
                   value={loginInput.password}
                   onChange={e => setPassword(e.target.value)}
                   onKeyDown={(e) => {
@@ -166,7 +168,7 @@ export default function LoginPage() {
 
           <p className="mt-10 text-center text-sm/6 text-gray-400">
             Nemate profil?
-            <a href="#" className="font-semibold text-primary-dark-light hover:text-primary transition duration-300"> Registrujte se sada!</a>
+            <Link to="/register" className="font-semibold text-primary-dark-light hover:text-primary transition duration-300"> Registrujte se sada!</Link>
           </p>
         </div>
       </div>

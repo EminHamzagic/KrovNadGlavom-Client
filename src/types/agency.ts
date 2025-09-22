@@ -7,6 +7,7 @@ export interface Agency {
   phone: string;
   city: string;
   description: string;
+  bankAccountNumber: string;
   numberOfBuildings?: number;
   numberOfApartments?: number;
 }
@@ -19,4 +20,5 @@ export interface AgencyToAdd {
   phone: string;
   city: string;
   description: string;
+  bankAccountNumber: string;
 }
