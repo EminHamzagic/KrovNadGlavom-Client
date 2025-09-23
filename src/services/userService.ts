@@ -1,26 +1,26 @@
-import axios from "axios";
 import type { LoginData, User, UserToAdd } from "../types/user";
 import { API_URL } from "../config";
 import type { LogoUpload } from "../types/company";
+import apiClient from "../utils/apiClient";
 
 export async function loginUser(
   loginData: LoginData,
 ): Promise<User> {
-  const { data } = await axios.post<User>(`${API_URL}/Users/login`, loginData);
+  const { data } = await apiClient.post<User>(`${API_URL}/Users/login`, loginData);
   return data;
 }
 
 export async function loginUserGoogle(
   idToken: string,
 ): Promise<User> {
-  const { data } = await axios.post<User>(`${API_URL}/Users/google`, { idToken });
+  const { data } = await apiClient.post<User>(`${API_URL}/Users/google`, { idToken });
   return data;
 }
 
 export async function registerUser(
   registerData: UserToAdd,
 ): Promise<string> {
-  const { data } = await axios.post<string>(`${API_URL}/Users/register`, registerData);
+  const { data } = await apiClient.post<string>(`${API_URL}/Users/register`, registerData);
   return data;
 }
 
@@ -31,7 +31,7 @@ export async function uploadUserPfp(
   formData.append("Id", logoData.id);
   formData.append("File", logoData.file);
 
-  const { data } = await axios.put<string>(
+  const { data } = await apiClient.put<string>(
     `${API_URL}/Users/image`,
     formData,
     {

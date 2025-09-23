@@ -1,11 +1,18 @@
 import { API_URL } from "../config";
-import type { Building, BuildingToAdd } from "../types/building";
+import type { Building, BuildingEndDateToExtend, BuildingToAdd } from "../types/building";
 import apiClient from "../utils/apiClient";
 
-export async function getBuildings(
+export async function getCompanyBuildings(
   companyId: string,
 ): Promise<Building[]> {
   const { data } = await apiClient.get<Building[]>(`${API_URL}/Buildings/company/${companyId}`);
+  return data;
+}
+
+export async function getBuildings(
+  agencyId: string,
+): Promise<Building[]> {
+  const { data } = await apiClient.get<Building[]>(`${API_URL}/Buildings/${agencyId}/agency`);
   return data;
 }
 
@@ -28,6 +35,14 @@ export async function editBuilding(
   id: string,
 ): Promise<Building> {
   const { data } = await apiClient.put<Building>(`${API_URL}/Buildings/${id}`, buildingData);
+  return data;
+}
+
+export async function extendBuildingEndDate(
+  buildingData: BuildingEndDateToExtend,
+  id: string,
+): Promise<Building> {
+  const { data } = await apiClient.put<Building>(`${API_URL}/Buildings/${id}/extend`, buildingData);
   return data;
 }
 

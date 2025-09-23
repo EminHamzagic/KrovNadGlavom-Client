@@ -10,6 +10,7 @@ interface UserContextType {
   logout: () => void;
   getRole: () => string | null;
   getId: () => string | number | null;
+  getUserType: () => string;
   user: User;
 }
 
@@ -52,6 +53,21 @@ export default function UserContextProvider({ children }: UserContextProviderPro
     setTokens({} as Tokens);
   };
 
+  const getUserType = () => {
+    if (user.role === "Admin") {
+      return "Admin";
+    }
+    else if (user.role === "Manager") {
+      if (user.agencyId)
+        return "Agency";
+      else
+        return "Company";
+    }
+    else {
+      return "User";
+    }
+  };
+
   return (
     <UserContext.Provider
       value={{
@@ -61,6 +77,7 @@ export default function UserContextProvider({ children }: UserContextProviderPro
         logout,
         getRole,
         getId,
+        getUserType,
         user,
       }}
     >

@@ -4,6 +4,8 @@ export const breadcrumbConfig: Record<string, { label: string }> = {
   "/buildings/create": { label: "Dodavanje zgrade" },
   "/buildings/:id/edit": { label: "Izmena zgrade" },
   "/company": { label: "Kompanija" },
-  "/agency-requests": { label: "Zahtevi agencija" },
+  "/agency": { label: "Agencija" },
+  "/contracts": { label: "Ugovori" },
+  "/requests": { label: "Zahtevi" },
   "/discount-requests": { label: "Zahtevi za popust" },
 };

@@ -8,8 +8,11 @@ import FullScreenLoader from "../../components/FullScreenLoader";
 import { formatDate } from "../../utils/dateFormatter";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import BuildingApartments from "../../components/Building/BuildingApartments";
-import { PenLine, Trash } from "lucide-react";
+import { ClockPlus, PenLine, Trash } from "lucide-react";
 import Modal from "../../components/Modal";
+import ExtendBuildingEndModal from "../../components/Building/ExtendBuildingEndModal";
+import { RequireRole } from "../../components/Auth/RequireRole";
+import SendRequestButtonModal from "../../components/AgencyRequest/SendRequestButtonModal";
 
 export default function BuildingDetailsPage() {
   const { buildingId } = useParams<{ buildingId: string }>();
@@ -17,6 +20,8 @@ export default function BuildingDetailsPage() {
   const [loading, setLoading] = useState<boolean>(false);
   const [loadingModal, setLoadingModal] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isOpenExtend, setIsOpenExtend] = useState<boolean>(false);
+  const [reload, setReload] = useState<boolean>(false);
 
   const navigate = useNavigate();
   const { showToast } = useToast();
@@ -44,7 +49,7 @@ export default function BuildingDetailsPage() {
     };
 
     fetchBuilding();
-  }, []);
+  }, [reload]);
 
   const handleDelete = async () => {
     if (buildingId) {
@@ -77,10 +82,21 @@ export default function BuildingDetailsPage() {
       <div className="planel shadow-md flex-col flex justify-center bg-white rounded-md p-4 mb-10">
         <div className="flex justify-between items-center mb-10">
           <h1 className="text-3xl">Detalji zgrade</h1>
-          <div className="flex gap-2">
-            <button className="btn btn-primary px-3" onClick={() => navigate(`/buildings/${building.id}/edit`)}><PenLine size={18} /></button>
-            <button className="btn btn-danger px-3" onClick={() => setIsOpen(true)}><Trash size={18} /></button>
-          </div>
+          <RequireRole roles={["Company"]}>
+            <div className="flex gap-2">
+              {!building.extendedUntil && (
+                <button className="btn btn-info flex justify-center items-center" onClick={() => setIsOpenExtend(true)}>
+                  <span className="mr-2">Produži</span>
+                  <ClockPlus />
+                </button>
+              )}
+              <button className="btn btn-primary px-3" onClick={() => navigate(`/buildings/${building.id}/edit`)}><PenLine size={18} /></button>
+              <button className="btn btn-danger px-3" onClick={() => setIsOpen(true)}><Trash size={18} /></button>
+            </div>
+          </RequireRole>
+          <RequireRole roles={["Agency"]}>
+            <SendRequestButtonModal building={building} setReload={setReload} />
+          </RequireRole>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 w-full">
           <div className="col-span-2 sm:col-span-3 grid grid-cols-2 sm:grid-cols-3">
@@ -175,12 +191,14 @@ export default function BuildingDetailsPage() {
         </div>
       </div>
 
-      <BuildingApartments apartments={building.apartments ?? []} />
+      <BuildingApartments floorCount={building.floorCount} apartments={building.apartments ?? []} buildingId={building.id} setReload={setReload} />
       <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} title="Brisanje zgrade" onConfirm={handleDelete} loading={loadingModal}>
         <div>
           <p>Da li ste sigurni da želite da izbrišete ovu zgradu?</p>
         </div>
       </Modal>
+
+      <ExtendBuildingEndModal building={building} isOpen={isOpenExtend} setIsOpen={setIsOpenExtend} setReload={setReload} />
     </>
   );
 }

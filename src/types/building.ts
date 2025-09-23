@@ -21,6 +21,7 @@ export interface Building {
   longitude: number;
   latitude: number;
   description: string;
+  requestStatus: string;
   apartments?: Apartment[];
   garages?: Garage[];
   priceList?: PriceList;
@@ -44,4 +45,8 @@ export interface BuildingToAdd {
   apartments?: ApartmentToAdd[];
   garages?: GarageToAdd[];
   priceList: PriceListToAdd;
+}
+
+export interface BuildingEndDateToExtend {
+  extendedUntil?: string;
 }
