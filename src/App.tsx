@@ -15,12 +15,17 @@ import CreateBuildingPage from "./pages/Building/CreateBuildingPage";
 import BuildingsPage from "./pages/Building/BuildingsPage";
 import BuildingEditPage from "./pages/Building/BuildingEditPage";
 import RegisterPage from "./pages/RegisterPage";
+import { RequireRoleRoute } from "./components/Auth/RequireRoleRoute";
+import AgencyPage from "./pages/Agency/AgencyPage";
+import ContractsPage from "./pages/Contract/ContractsPage";
+import ApartmentsPage from "./pages/Apartment/ApartmentsPage";
 
 function App() {
   return (
     <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
       <UserContextProvider>
         <Routes>
+          {/* Auth rute */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
 
@@ -29,14 +34,64 @@ function App() {
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
               <Route path="/dashboard" element={<HomePage />} />
 
+              {/* Zgrada rute */}
               <Route path="/buildings" element={<BuildingsPage />} />
               <Route path="/buildings/:buildingId" element={<BuildingDetailsPage />} />
-              <Route path="/buildings/:buildingId/edit" element={<BuildingEditPage />} />
-              <Route path="/buildings/create" element={<CreateBuildingPage />} />
+              <Route
+                path="/buildings/:buildingId/edit"
+                element={
+                  <RequireRoleRoute roles={["Company"]} element={<BuildingEditPage />} />
+                }
+              />
+              <Route
+                path="/buildings/create"
+                element={
+                  <RequireRoleRoute roles={["Company"]} element={<CreateBuildingPage />} />
+                }
+              />
 
-              <Route path="/company" element={<CompanyPage />} />
-              <Route path="/agency-requests" element={<AgencyRequestsPage />} />
+              {/* Kompanija rute */}
+              <Route
+                path="/company"
+                element={
+                  <RequireRoleRoute roles={["Company"]} element={<CompanyPage />} />
+                }
+              />
+
+              {/* Zahtevi rute */}
+              <Route
+                path="/requests"
+                element={
+                  <RequireRoleRoute roles={["Company", "Agency"]} element={<AgencyRequestsPage />} />
+                }
+              />
+
+              {/* Popusti rute */}
               <Route path="/discount-requests" element={<DiscountRequestsPage />} />
+
+              {/* Agencija rute */}
+              <Route
+                path="/agency"
+                element={
+                  <RequireRoleRoute roles={["Agency"]} element={<AgencyPage />} />
+                }
+              />
+
+              {/* Ugovori rute */}
+              <Route
+                path="/contracts"
+                element={
+                  <RequireRoleRoute roles={["Agency", "User"]} element={<ContractsPage />} />
+                }
+              />
+
+              {/* Stanovi(Apartments) rute */}
+              <Route
+                path="/apartments"
+                element={
+                  <RequireRoleRoute roles={["User"]} element={<ApartmentsPage />} />
+                }
+              />
             </Route>
           </Route>
 

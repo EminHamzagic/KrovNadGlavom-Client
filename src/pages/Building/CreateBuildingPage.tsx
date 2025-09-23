@@ -41,8 +41,8 @@ export default function CreateBuildingPage({ building }: Props) {
     },
   });
   const [apartments, setApartments] = useState<ApartmentToAdd[]>([]);
-  const [startDate, setStartDate] = useState<Date>(new Date());
-  const [endDate, setEndDate] = useState<Date>(new Date());
+  const [startDate, setStartDate] = useState<Date>(building?.startDate ? new Date(building.startDate) : new Date());
+  const [endDate, setEndDate] = useState<Date>(building?.endDate ? new Date(building.endDate) : new Date());
   const [loading, setLoading] = useState<boolean>(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [step, setStep] = useState<number>(1);
@@ -277,7 +277,7 @@ export default function CreateBuildingPage({ building }: Props) {
               </div>
             </div>
 
-            <div className={`col-span-1 sm:col-span-2 ${errors.startDate && "has-error"}`}>
+            <div className={`col-span-1 sm:col-span-2  ${errors.startDate && "has-error"}`}>
               <label className="form-label">Datum početka izgradnje:</label>
               <DatePicker
                 selected={startDate}
@@ -285,9 +285,10 @@ export default function CreateBuildingPage({ building }: Props) {
                   if (date)
                     setStartDate(date);
                 }}
-                className="form-input w-full"
+                className={`form-input w-full ${building?.startDate && "bg-gray-200"}`}
                 wrapperClassName="w-full"
                 dateFormat="dd.MM.yyyy"
+                disabled={Boolean(building?.startDate)}
               />
               {errors.startDate && (
                 <p className="text-danger text-sm mt-1">{errors.startDate}</p>
@@ -301,9 +302,10 @@ export default function CreateBuildingPage({ building }: Props) {
                   if (date)
                     setEndDate(date);
                 }}
-                className="form-input w-full"
+                className={`form-input w-full ${building?.endDate && "bg-gray-200"}`}
                 wrapperClassName="w-full"
                 dateFormat="dd.MM.yyyy"
+                disabled={Boolean(building?.endDate)}
               />
               {errors.endDate && (
                 <p className="text-danger text-sm mt-1">{errors.endDate}</p>

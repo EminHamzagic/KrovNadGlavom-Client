@@ -1,8 +1,9 @@
 import { useLocation, useNavigate } from "react-router";
 import logo from "/KrovNadGlavomLogo.png";
-import { Building, Building2, LayoutDashboard, LogOut, MessageSquarePlus, Percent, X } from "lucide-react";
+import { Bed, Building, Building2, FileUser, LayoutDashboard, LogOut, MessageSquarePlus, Percent, X } from "lucide-react";
 import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
+import { RequireRole } from "./Auth/RequireRole";
 
 export default function Header({
   sidebarOpen,
@@ -74,42 +75,81 @@ export default function Header({
               <span className="ml-2">Kontrolna tabla</span>
             </button>
 
-            <button
-              onClick={() => {
-                navigate("/buildings");
-                setSidebarOpen(false);
-              }}
-              className={`${baseClasses} ${
-                isActive("/buildings") ? "bg-gray-200" : "hover:bg-gray-200"
-              }`}
-            >
-              <Building />
-              <span className="ml-2">Zgrade</span>
-            </button>
-            <button
-              onClick={() => {
-                navigate("/company");
-                setSidebarOpen(false);
-              }}
-              className={`${baseClasses} ${
-                isActive("/company") ? "bg-gray-200" : "hover:bg-gray-200"
-              }`}
-            >
-              <Building2 />
-              <span className="ml-2">Kompanija</span>
-            </button>
-            <button
-              onClick={() => {
-                navigate("/agency-requests");
-                setSidebarOpen(false);
-              }}
-              className={`${baseClasses} ${
-                isActive("/agency-requests") ? "bg-gray-200" : "hover:bg-gray-200"
-              }`}
-            >
-              <MessageSquarePlus />
-              <span className="ml-2">Zahtevi agencija</span>
-            </button>
+            <RequireRole roles={["User"]}>
+              <button
+                onClick={() => {
+                  navigate("/apartments");
+                  setSidebarOpen(false);
+                }}
+                className={`${baseClasses} ${
+                  isActive("/apartments") ? "bg-gray-200" : "hover:bg-gray-200"
+                }`}
+              >
+                <Bed />
+                <span className="ml-2">Stanovi</span>
+              </button>
+            </RequireRole>
+
+            <RequireRole roles={["Company", "Agency"]}>
+              <button
+                onClick={() => {
+                  navigate("/buildings");
+                  setSidebarOpen(false);
+                }}
+                className={`${baseClasses} ${
+                  isActive("/buildings") ? "bg-gray-200" : "hover:bg-gray-200"
+                }`}
+              >
+                <Building />
+                <span className="ml-2">Zgrade</span>
+              </button>
+            </RequireRole>
+
+            <RequireRole roles={["Company"]}>
+              <button
+                onClick={() => {
+                  navigate("/company");
+                  setSidebarOpen(false);
+                }}
+                className={`${baseClasses} ${
+                  isActive("/company") ? "bg-gray-200" : "hover:bg-gray-200"
+                }`}
+              >
+                <Building2 />
+                <span className="ml-2">Kompanija</span>
+              </button>
+            </RequireRole>
+
+            <RequireRole roles={["Agency"]}>
+              <button
+                onClick={() => {
+                  navigate("/agency");
+                  setSidebarOpen(false);
+                }}
+                className={`${baseClasses} ${
+                  isActive("/agency") ? "bg-gray-200" : "hover:bg-gray-200"
+                }`}
+              >
+                <Building2 />
+                <span className="ml-2">Agencija</span>
+              </button>
+            </RequireRole>
+
+            <RequireRole roles={["Company", "Agency"]}>
+              <button
+                onClick={() => {
+                  navigate("/requests");
+                  setSidebarOpen(false);
+                }}
+                className={`${baseClasses} ${
+                  isActive("/requests") ? "bg-gray-200" : "hover:bg-gray-200"
+                }`}
+              >
+                <MessageSquarePlus />
+                <span className="ml-2">Zahtevi</span>
+              </button>
+            </RequireRole>
+
             <button
               onClick={() => {
                 navigate("/discount-requests");
@@ -122,6 +162,21 @@ export default function Header({
               <Percent />
               <span className="ml-2">Zahtevi za popust</span>
             </button>
+
+            <RequireRole roles={["User", "Agency"]}>
+              <button
+                onClick={() => {
+                  navigate("/contracts");
+                  setSidebarOpen(false);
+                }}
+                className={`${baseClasses} ${
+                  isActive("/contracts") ? "bg-gray-200" : "hover:bg-gray-200"
+                }`}
+              >
+                <FileUser />
+                <span className="ml-2">Ugovori</span>
+              </button>
+            </RequireRole>
           </div>
           <button
             onClick={() => {
