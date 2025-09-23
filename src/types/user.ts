@@ -32,6 +32,8 @@ export interface UserToAdd {
   email: string;
   password: string;
   role: string;
+  constructionCompanyId?: string;
+  agencyId?: string;
 }
 
 export interface UserAgencyFollowToAdd {

@@ -8,6 +8,7 @@ export interface Company {
   city: string;
   logoUrl: string;
   description: string;
+  bankAccountNumber: string;
 }
 
 export interface CompanyToAdd {
@@ -18,4 +19,10 @@ export interface CompanyToAdd {
   phone: string;
   city: string;
   description: string;
+  bankAccountNumber: string;
+}
+
+export interface LogoUpload {
+  id: string;
+  file: File;
 }

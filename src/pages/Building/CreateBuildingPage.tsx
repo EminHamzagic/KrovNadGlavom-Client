@@ -202,7 +202,7 @@ export default function CreateBuildingPage({ building }: Props) {
 
   return (
     <div className="planel flex-col shadow-md flex justify-center bg-white rounded-md p-4">
-      <Stepper step={step} stepArray={steps} />
+      {!building && <Stepper step={step} stepArray={steps} />}
       {step === 1 && (
         <div className="flex flex-col justify-center">
           <p className="text-2xl">Informacije o zgradi</p>
@@ -447,7 +447,7 @@ export default function CreateBuildingPage({ building }: Props) {
             )
           : building
             ? (
-                <button className="btn btn-primary sm:col-start-4" onClick={handleBuildingEdit}>
+                <button className="btn btn-primary col-span-2 sm:col-span-4" onClick={handleBuildingEdit} disabled={loading}>
                   {loading
                     ? (
                         <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
