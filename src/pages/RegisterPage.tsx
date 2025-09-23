@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { UserToAdd } from "../types/user";
 import { Building, Building2, Eye, EyeOff, UserRound } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import { PopupType, useToast } from "../hooks/useToast";
-import { registerUser } from "../services/userService";
+import { registerUser, uploadUserPfp } from "../services/userService";
 import axios from "axios";
 import CompanyCreateForm from "./Company/CompanyCreateForm";
+import type { LogoUpload } from "../types/company";
+import AgencyCreateForm from "./Agency/AgencyCreateForm";
 
 export default function RegisterPage() {
   const [registerData, setRegisterData] = useState<UserToAdd>({
@@ -21,6 +23,9 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState<boolean>(false);
   const [activeForm, setActiveForm] = useState<number>(1);
   const [showPassword, setShowPassword] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [logoData, setLogoData] = useState<LogoUpload | null>(null);
 
   const roles = ["Korisnik", "Agencija", "Građevinska firma"];
   const navigate = useNavigate();
@@ -36,6 +41,22 @@ export default function RegisterPage() {
       ...prev,
       [key]: "",
     }));
+  };
+
+  const handleLogoClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setLogoData({ id: "", file });
+      const reader = new FileReader();
+      reader.onload = () => {
+        setLogoPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const validateData = (data: UserToAdd) => {
@@ -73,6 +94,22 @@ export default function RegisterPage() {
     return newErrors;
   };
 
+  const handleFileUpload = async (userId: string) => {
+    if (logoData) {
+      try {
+        await uploadUserPfp({ ...logoData, id: userId });
+      }
+      catch (err) {
+        if (axios.isAxiosError(err)) {
+          showToast(PopupType.Danger, err.response?.data);
+        }
+        else {
+          showToast(PopupType.Danger, `Unkown error: ${err}`);
+        }
+      }
+    }
+  };
+
   const handleRegister = async () => {
     const validationErrors = validateData(registerData);
 
@@ -85,7 +122,9 @@ export default function RegisterPage() {
     if (regType === "Korisnik") {
       try {
         setLoading(true);
-        await registerUser(registerData);
+        const userId = await registerUser(registerData);
+
+        await handleFileUpload(userId);
 
         showToast(PopupType.Success, "Registracija je bila uspešna. Molimo vas prijavite se");
         navigate("/login");
@@ -123,6 +162,33 @@ export default function RegisterPage() {
           </div>
           <div className="mt-10">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div className="col-span-1 sm:col-span-2 flex flex-col items-center">
+                <label className="form-label mb-2">Profilna slika:</label>
+                <div
+                  onClick={handleLogoClick}
+                  className="w-34 h-34 rounded-full border-2 border-dashed border-primary flex items-center justify-center cursor-pointer overflow-hidden hover:bg-primary/10 transition"
+                >
+                  {logoPreview
+                    ? (
+                        <img
+                          src={logoPreview}
+                          alt="Logo preview"
+                          className="w-full h-full object-cover"
+                        />
+                      )
+                    : (
+                        <span className="text-sm text-primary">Klikni za upload</span>
+                      )}
+                </div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleFileChange}
+                />
+              </div>
+
               <div className={`col-span-1 ${errors.name && "has-error"}`}>
                 <label className="form-label">Ime:</label>
                 <input
@@ -252,6 +318,7 @@ export default function RegisterPage() {
         </div>
       )}
 
+      {activeForm === 2 && <AgencyCreateForm registerData={registerData} setStep={setActiveForm} />}
       {activeForm === 3 && <CompanyCreateForm registerData={registerData} setStep={setActiveForm} />}
     </div>
   );
