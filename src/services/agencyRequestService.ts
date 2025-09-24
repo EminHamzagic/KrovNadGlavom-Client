@@ -1,5 +1,5 @@
 import { API_URL } from "../config";
-import type { AgencyRequest, AgencyRequestToAdd, AgencyRequestToUpdate } from "../types/agencyRequest";
+import type { AgencyRequest, AgencyRequestToAdd, AgencyRequestToUpdate, StatusEnum } from "../types/agencyRequest";
 import apiClient from "../utils/apiClient";
 
 export async function createAgencyRequest(
@@ -11,15 +11,17 @@ export async function createAgencyRequest(
 
 export async function getAgencyBuildingRequests(
   agencyId: string,
+  status: StatusEnum,
 ): Promise<AgencyRequest[]> {
-  const { data } = await apiClient.get<AgencyRequest[]>(`${API_URL}/AgencyRequests/agency/${agencyId}`);
+  const { data } = await apiClient.get<AgencyRequest[]>(`${API_URL}/AgencyRequests/agency/${agencyId}?status=${status}`);
   return data;
 }
 
 export async function getCompanyBuildingRequests(
   companyId: string,
+  status: StatusEnum,
 ): Promise<AgencyRequest[]> {
-  const { data } = await apiClient.get<AgencyRequest[]>(`${API_URL}/AgencyRequests/company/${companyId}`);
+  const { data } = await apiClient.get<AgencyRequest[]>(`${API_URL}/AgencyRequests/company/${companyId}?status=${status}`);
   return data;
 }
 

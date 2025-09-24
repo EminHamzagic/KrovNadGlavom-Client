@@ -27,6 +27,6 @@ export interface AgencyRequestToAdd {
 }
 
 export interface AgencyRequestToUpdate {
-  status: string;
-  rejectionReason: StatusEnum;
+  status: StatusEnum;
+  rejectionReason: string;
 }

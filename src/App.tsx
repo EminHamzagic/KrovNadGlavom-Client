@@ -7,7 +7,7 @@ import { GOOGLE_CLIENT_ID } from "./config";
 import LayoutComponent from "./components/LayoutComponent";
 import ProtectedRoute from "./components/ProtectedRoute";
 import CompanyPage from "./pages/Company/CompanyPage";
-import AgencyRequestsPage from "./pages/Agency/AgencyRequestsPage";
+import AgencyRequestsPage from "./pages/AgencyRequests/AgencyRequestsPage";
 import DiscountRequestsPage from "./pages/DiscountRequestsPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import BuildingDetailsPage from "./pages/Building/BuildingDetailsPage";
