@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
-import type { Apartment, ApartmentToAdd } from "../../types/apartment";
-import { getOrientationLabel, OrientationEnum } from "../../utils/orientation";
+import type { Apartment, ApartmentToAdd, MultipleApartmentsToAdd } from "../../types/apartment";
 import Modal from "../Modal";
-import { createApartment, editApartment } from "../../services/apartmentService";
+import { getOrientationLabel, OrientationEnum } from "../../utils/orientation";
 import { PopupType, useToast } from "../../hooks/useToast";
+import { createApartment, createMultipleApartment, editApartment } from "../../services/apartmentService";
 import axios from "axios";
 
 interface Props {
@@ -13,42 +13,44 @@ interface Props {
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   buildingId: string;
   setReload: Dispatch<SetStateAction<boolean>>;
-  apartment?: Apartment;
+  existingApartment?: Apartment;
 }
 
-export default function ApartmentCreateModal({ floorCount, isOpen, setIsOpen, buildingId, setReload, apartment }: Props) {
-  const [apartmentData, setApartmentData] = useState<ApartmentToAdd>({
-    id: apartment?.id ?? crypto.randomUUID(),
+export default function CreateApartmentModal({ floorCount, isOpen, setIsOpen, buildingId, setReload, existingApartment }: Props) {
+  const [apartment, setApartment] = useState<ApartmentToAdd>({
+    id: existingApartment?.id ?? crypto.randomUUID(),
     buildingId,
-    apartmentNumber: apartment?.apartmentNumber ?? "",
-    area: apartment?.area ?? 0,
-    roomCount: apartment?.roomCount ?? 0,
-    balconyCount: apartment?.balconyCount ?? 0,
-    orientation: (apartment?.orientation as OrientationEnum) ?? OrientationEnum.North,
-    floor: apartment?.floor ?? 1,
+    apartmentNumber: existingApartment?.apartmentNumber ?? "",
+    area: existingApartment?.area ?? 0,
+    roomCount: existingApartment?.roomCount ?? 0,
+    balconyCount: existingApartment?.balconyCount ?? 0,
+    orientation: (existingApartment?.orientation as OrientationEnum) ?? OrientationEnum.North,
+    floor: existingApartment?.floor ?? 1,
     isAvailable: true,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [multiFloor, setMultiFloor] = useState<boolean>(false);
+  const [perFloor, setPerFloor] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
 
   const { showToast } = useToast();
 
   useEffect(() => {
-    if (apartment) {
-      setApartmentData({
-        id: apartment.id ?? crypto.randomUUID(),
+    if (existingApartment) {
+      setApartment({
+        id: existingApartment.id ?? crypto.randomUUID(),
         buildingId,
-        apartmentNumber: apartment.apartmentNumber ?? "",
-        area: apartment.area ?? 0,
-        roomCount: apartment.roomCount ?? 0,
-        balconyCount: apartment.balconyCount ?? 0,
-        orientation: (apartment.orientation as OrientationEnum) ?? OrientationEnum.North,
-        floor: apartment.floor ?? 1,
+        apartmentNumber: existingApartment.apartmentNumber ?? "",
+        area: existingApartment.area ?? 0,
+        roomCount: existingApartment.roomCount ?? 0,
+        balconyCount: existingApartment.balconyCount ?? 0,
+        orientation: (existingApartment.orientation as OrientationEnum) ?? OrientationEnum.North,
+        floor: existingApartment.floor ?? 1,
         isAvailable: true,
       });
     }
     else {
-      setApartmentData({
+      setApartment({
         id: crypto.randomUUID(),
         buildingId,
         apartmentNumber: "",
@@ -60,10 +62,10 @@ export default function ApartmentCreateModal({ floorCount, isOpen, setIsOpen, bu
         isAvailable: true,
       });
     }
-  }, [apartment, buildingId]);
+  }, [existingApartment, buildingId]);
 
   const handleChange = (key: keyof ApartmentToAdd, value: any) => {
-    setApartmentData(prev => ({
+    setApartment(prev => ({
       ...prev,
       [key]: value,
     }));
@@ -95,7 +97,7 @@ export default function ApartmentCreateModal({ floorCount, isOpen, setIsOpen, bu
   const handleEdit = async () => {
     try {
       setLoading(true);
-      await editApartment(apartmentData);
+      await editApartment(apartment);
 
       showToast(PopupType.Success, "Stan je uspešno izmenjen");
       setReload(prev => !prev);
@@ -114,7 +116,7 @@ export default function ApartmentCreateModal({ floorCount, isOpen, setIsOpen, bu
   };
 
   const handleAdd = async () => {
-    const validationErrors = validateApartmentData(apartmentData);
+    const validationErrors = validateApartmentData(apartment);
 
     if (Object.keys(validationErrors).length > 0) {
       showToast(PopupType.Danger, "Nevalidni podaci, molimo vas ponovo proverite");
@@ -122,16 +124,35 @@ export default function ApartmentCreateModal({ floorCount, isOpen, setIsOpen, bu
       return;
     }
 
-    if (apartment?.id) {
+    if (existingApartment?.id) {
       await handleEdit();
     }
     else {
       try {
         setLoading(true);
-        await createApartment(apartmentData);
+        if (multiFloor) {
+          const newApartments: ApartmentToAdd[] = [];
 
-        showToast(PopupType.Success, "Stan je uspešno kreiran");
-        setReload(prev => !prev);
+          for (let floor = 1; floor <= floorCount; floor++) {
+            for (let i = 1; i <= perFloor; i++) {
+              newApartments.push({
+                ...apartment,
+                id: crypto.randomUUID(),
+                floor,
+                apartmentNumber: `${apartment.apartmentNumber}-${floor}-${i}`,
+              });
+            }
+          }
+
+          await createMultipleApartment({ apartments: newApartments } as MultipleApartmentsToAdd);
+          setReload(prev => !prev);
+          showToast(PopupType.Success, "Stanovi su uspešno dodati");
+        }
+        else {
+          await createApartment(apartment);
+          setReload(prev => !prev);
+          showToast(PopupType.Success, "Stan je uspešno dodat");
+        }
       }
       catch (err) {
         if (axios.isAxiosError(err)) {
@@ -148,7 +169,7 @@ export default function ApartmentCreateModal({ floorCount, isOpen, setIsOpen, bu
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} title={apartment?.id ? "Izmeni stan" : "Dodaj stan"} confirmText={apartment?.id ? "Izmeni" : "Dodaj"} size="2xl" onConfirm={handleAdd} loading={loading}>
+    <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} title="Dodaj stanove" size="2xl" onConfirm={handleAdd} loading={loading}>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <div className={`col-span-1 ${errors.apartmentNumber && "has-error"}`}>
           <label className="form-label">Broj stana:</label>
@@ -156,7 +177,7 @@ export default function ApartmentCreateModal({ floorCount, isOpen, setIsOpen, bu
             type="text"
             className="form-input"
             placeholder="Unesite broj stana"
-            value={apartmentData.apartmentNumber}
+            value={apartment.apartmentNumber}
             onChange={e => handleChange("apartmentNumber", e.target.value)}
           />
           {errors.apartmentNumber && (
@@ -167,7 +188,7 @@ export default function ApartmentCreateModal({ floorCount, isOpen, setIsOpen, bu
           <label className="form-label">Sprat:</label>
           <select
             className="form-input"
-            value={apartmentData.floor}
+            value={apartment.floor}
             onChange={e => handleChange("floor", e.target.value)}
           >
             {Array.from({ length: floorCount }, (_, i) => i + 1).map(floor => (
@@ -187,7 +208,7 @@ export default function ApartmentCreateModal({ floorCount, isOpen, setIsOpen, bu
             type="text"
             className="form-input"
             placeholder="Unesite površinu stana"
-            value={apartmentData.area}
+            value={apartment.area}
             onChange={e => handleChange("area", Number.parseInt(e.target.value) || 0)}
           />
           {errors.area && (
@@ -198,7 +219,7 @@ export default function ApartmentCreateModal({ floorCount, isOpen, setIsOpen, bu
           <label className="form-label">Orijentacija:</label>
           <select
             className="form-input"
-            value={apartmentData.orientation}
+            value={apartment.orientation}
             onChange={e => handleChange("orientation", e.target.value)}
           >
             <option value="">Izaberite orijentaciju</option>
@@ -219,7 +240,7 @@ export default function ApartmentCreateModal({ floorCount, isOpen, setIsOpen, bu
             type="text"
             className="form-input"
             placeholder="Unesite broj soba stana"
-            value={apartmentData.roomCount}
+            value={apartment.roomCount}
             onChange={e => handleChange("roomCount", Number.parseInt(e.target.value) || 0)}
           />
           {errors.roomCount && (
@@ -232,13 +253,41 @@ export default function ApartmentCreateModal({ floorCount, isOpen, setIsOpen, bu
             type="text"
             className="form-input"
             placeholder="Unesite broj terasa stana"
-            value={apartmentData.balconyCount}
+            value={apartment.balconyCount}
             onChange={e => handleChange("balconyCount", Number.parseInt(e.target.value) || 0)}
           />
           {errors.balconyCount && (
             <p className="text-danger text-sm mt-1">{errors.balconyCount}</p>
           )}
         </div>
+
+        {!existingApartment?.id && (
+          <div>
+            <label className="flex itmes-center">
+              <input type="checkbox" className="form-checkbox" checked={multiFloor} onChange={e => setMultiFloor(e.target.checked)} />
+              Dodaj ovaj stan na sve spratove
+            </label>
+            {multiFloor
+              && (
+                <>
+                  <p className="mt-3">Broj stanova po spratu</p>
+                  <div className="flex">
+                    <button
+                      className="btn btn-primary p-1 px-3"
+                      onClick={() => {
+                        if (perFloor > 1)
+                          setPerFloor(perFloor - 1);
+                      }}
+                    >
+                      -
+                    </button>
+                    <div className="border-2 border-gray-300 px-3 rounded-md mx-1 flex items-center justify-center">{perFloor}</div>
+                    <button className="btn btn-primary p-1 px-3" onClick={() => setPerFloor(perFloor + 1)}>+</button>
+                  </div>
+                </>
+              )}
+          </div>
+        )}
       </div>
     </Modal>
   );

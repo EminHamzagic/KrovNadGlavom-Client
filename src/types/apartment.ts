@@ -29,3 +29,7 @@ export interface ApartmentToAdd {
   floor: number;
   isAvailable: boolean;
 }
+
+export interface MultipleApartmentsToAdd {
+  apartments: ApartmentToAdd[];
+}

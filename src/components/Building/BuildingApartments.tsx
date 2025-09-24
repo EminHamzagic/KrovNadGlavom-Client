@@ -3,12 +3,12 @@ import type { Dispatch, SetStateAction } from "react";
 import type { Apartment } from "../../types/apartment";
 import Modal from "../Modal";
 import { getOrientationLabel } from "../../utils/orientation";
-import ApartmentCreateModal from "../Apartment/ApartmentCreateModal";
 import { MoreVertical, PenLine, Trash } from "lucide-react";
 import { deleteApartment } from "../../services/apartmentService";
 import { PopupType, useToast } from "../../hooks/useToast";
 import axios from "axios";
 import { RequireRole } from "../Auth/RequireRole";
+import CreateApartmentModal from "../Apartment/CreateApartmentModal";
 
 interface Props {
   apartments: Apartment[];
@@ -25,6 +25,7 @@ export default function BuildingApartments({ apartments, floorCount, buildingId,
   const [selectedApartment, setSelectedApartment] = useState<Apartment | undefined>();
   const [openMenuIndex, setOpenMenuIndex] = useState<number | null>(null);
   const [editApartment, setEditApartment] = useState<Apartment>({} as Apartment);
+  const [activeFloor, setActiveFloor] = useState<number>(1);
 
   const { showToast } = useToast();
 
@@ -55,7 +56,7 @@ export default function BuildingApartments({ apartments, floorCount, buildingId,
   return (
     <>
       <div className="planel shadow-md flex-col flex justify-center bg-white rounded-md p-4">
-        <div className="flex justify-between items-center mb-10">
+        <div className="flex justify-between items-center mb-5">
           <h1 className="text-3xl">Stanovi</h1>
           <RequireRole roles={["Company"]}>
             <button
@@ -70,10 +71,34 @@ export default function BuildingApartments({ apartments, floorCount, buildingId,
           </RequireRole>
         </div>
 
+        <div className="text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700 mb-10">
+          <ul className="flex flex-wrap -mb-px">
+            {Array.from({ length: floorCount }, (_, i) => i + 1).map(floor => (
+              <li key={floor} className="me-2">
+                <button
+                  onClick={() => {
+                    setActiveFloor(floor);
+                    setOpenMenuIndex(null);
+                  }}
+                  className={`inline-block p-4 border-b-2 rounded-t-lg cursor-pointer ${
+                    activeFloor === floor
+                      ? "text-primary border-primary"
+                      : "border-transparent hover:text-gray-600 hover:border-gray-300 "
+                  }`}
+                >
+                  Sprat
+                  {" "}
+                  {floor}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+
         {apartments && apartments.length
           ? (
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-5">
-                {apartments.map((item, index) => (
+                {apartments.filter(item => item.floor === activeFloor).map((item, index) => (
                   <div key={index} className="p-6 bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col relative">
                     <RequireRole roles={["Company"]}>
                       <button
@@ -176,7 +201,7 @@ export default function BuildingApartments({ apartments, floorCount, buildingId,
         </div>
       </Modal>
 
-      <ApartmentCreateModal apartment={editApartment} isOpen={isOpenAdd} setIsOpen={setIsOpenAdd} floorCount={floorCount} buildingId={buildingId} setReload={setReload} />
+      <CreateApartmentModal existingApartment={editApartment} isOpen={isOpenAdd} setIsOpen={setIsOpenAdd} floorCount={floorCount} buildingId={buildingId} setReload={setReload} />
 
       <Modal isOpen={isOpenDelete} onClose={() => setIsOpenDelete(false)} title="Brisanje zgrade" onConfirm={handleDelete} loading={loading}>
         <div>
