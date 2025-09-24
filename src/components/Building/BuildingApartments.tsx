@@ -6,9 +6,9 @@ import { getOrientationLabel } from "../../utils/orientation";
 import { MoreVertical, PenLine, Trash } from "lucide-react";
 import { deleteApartment } from "../../services/apartmentService";
 import { PopupType, useToast } from "../../hooks/useToast";
-import axios from "axios";
 import { RequireRole } from "../Auth/RequireRole";
 import CreateApartmentModal from "../Apartment/CreateApartmentModal";
+import { handleError } from "../../utils/handleError";
 
 interface Props {
   apartments: Apartment[];
@@ -40,12 +40,7 @@ export default function BuildingApartments({ apartments, floorCount, buildingId,
         setReload(prev => !prev);
       }
       catch (err) {
-        if (axios.isAxiosError(err)) {
-          showToast(PopupType.Danger, err.response?.data || err.message);
-        }
-        else {
-          showToast(PopupType.Danger, `Unkown error: ${err}`);
-        }
+        handleError(err);
       }
       finally {
         setLoading(false);

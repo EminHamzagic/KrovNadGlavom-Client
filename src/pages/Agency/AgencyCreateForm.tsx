@@ -6,9 +6,9 @@ import type { LogoUpload } from "../../types/company";
 import { PopupType, useToast } from "../../hooks/useToast";
 import { useNavigate } from "react-router";
 import { registerUser } from "../../services/userService";
-import axios from "axios";
 import { createAgency, uploadAgencyLogo } from "../../services/agencyService";
 import { ArrowLeft } from "lucide-react";
+import { handleError } from "../../utils/handleError";
 
 interface Props {
   registerData: UserToAdd;
@@ -91,12 +91,7 @@ export default function AgencyCreateForm({ registerData, setStep }: Props) {
       navigate("/login");
     }
     catch (err) {
-      if (axios.isAxiosError(err)) {
-        showToast(PopupType.Danger, err.response?.data);
-      }
-      else {
-        showToast(PopupType.Danger, `Unkown error: ${err}`);
-      }
+      handleError(err);
     }
     finally {
       setLoading(false);
@@ -109,12 +104,7 @@ export default function AgencyCreateForm({ registerData, setStep }: Props) {
         await uploadAgencyLogo({ ...logoData, id: agencyId });
       }
       catch (err) {
-        if (axios.isAxiosError(err)) {
-          showToast(PopupType.Danger, err.response?.data);
-        }
-        else {
-          showToast(PopupType.Danger, `Unkown error: ${err}`);
-        }
+        handleError(err);
       }
     }
   };
@@ -136,12 +126,7 @@ export default function AgencyCreateForm({ registerData, setStep }: Props) {
       await handleRegister(agencyId);
     }
     catch (err) {
-      if (axios.isAxiosError(err)) {
-        showToast(PopupType.Danger, err.response?.data);
-      }
-      else {
-        showToast(PopupType.Danger, `Unkown error: ${err}`);
-      }
+      handleError(err);
     }
   };
 

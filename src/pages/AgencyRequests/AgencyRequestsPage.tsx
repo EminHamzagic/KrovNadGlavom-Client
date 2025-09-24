@@ -3,10 +3,9 @@ import { StatusEnum } from "../../types/agencyRequest";
 import type { AgencyRequest } from "../../types/agencyRequest";
 import { getAgencyBuildingRequests, getCompanyBuildingRequests } from "../../services/agencyRequestService";
 import { UserContext } from "../../context/UserContext";
-import axios from "axios";
-import { PopupType, useToast } from "../../hooks/useToast";
 import RequestCard from "./RequestCard";
 import FullScreenLoader from "../../components/FullScreenLoader";
+import { handleError } from "../../utils/handleError";
 
 export default function AgencyRequestsPage() {
   const [requests, setRequests] = useState<AgencyRequest[]>([]);
@@ -15,7 +14,6 @@ export default function AgencyRequestsPage() {
   const [reload, setReload] = useState<boolean>(false);
 
   const { user } = useContext(UserContext);
-  const { showToast } = useToast();
 
   const statusLabels: Record<StatusEnum, string> = {
     [StatusEnum.Pending]: "Na čekanju",
@@ -38,12 +36,7 @@ export default function AgencyRequestsPage() {
         }
       }
       catch (err) {
-        if (axios.isAxiosError(err)) {
-          showToast(PopupType.Danger, err.response?.data);
-        }
-        else {
-          showToast(PopupType.Danger, `Unkown error: ${err}`);
-        }
+        handleError(err);
       }
       finally {
         setLoading(false);

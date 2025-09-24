@@ -3,7 +3,6 @@ import { useNavigate, useParams } from "react-router";
 import type { Building } from "../../types/building";
 import { deleteBuilding, getBuildingById } from "../../services/buildingService";
 import { PopupType, useToast } from "../../hooks/useToast";
-import axios from "axios";
 import FullScreenLoader from "../../components/FullScreenLoader";
 import { formatDate } from "../../utils/dateFormatter";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
@@ -13,6 +12,7 @@ import Modal from "../../components/Modal";
 import ExtendBuildingEndModal from "../../components/Building/ExtendBuildingEndModal";
 import { RequireRole } from "../../components/Auth/RequireRole";
 import SendRequestButtonModal from "../../components/AgencyRequest/SendRequestButtonModal";
+import { handleError } from "../../utils/handleError";
 
 export default function BuildingDetailsPage() {
   const { buildingId } = useParams<{ buildingId: string }>();
@@ -35,12 +35,7 @@ export default function BuildingDetailsPage() {
           setBuilding(data);
         }
         catch (err) {
-          if (axios.isAxiosError(err)) {
-            showToast(PopupType.Danger, err.response?.data || err);
-          }
-          else {
-            showToast(PopupType.Danger, `Unkown error: ${err}`);
-          }
+          handleError(err);
         }
         finally {
           setLoading(false);
@@ -60,12 +55,7 @@ export default function BuildingDetailsPage() {
         navigate("/buildings");
       }
       catch (err) {
-        if (axios.isAxiosError(err)) {
-          showToast(PopupType.Danger, err.response?.data || err);
-        }
-        else {
-          showToast(PopupType.Danger, `Unkown error: ${err}`);
-        }
+        handleError(err);
       }
       finally {
         setLoadingModal(false);

@@ -6,10 +6,10 @@ import { useContext, useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import { deleteBuildingRequest, updateBuildingRequest } from "../../services/agencyRequestService";
 import { PopupType, useToast } from "../../hooks/useToast";
-import axios from "axios";
 import { CircleQuestionMark, MoreVertical, Trash } from "lucide-react";
 import Tooltip from "../../components/Tooltip";
 import { UserContext } from "../../context/UserContext";
+import { handleError } from "../../utils/handleError";
 
 interface Props {
   request: AgencyRequest;
@@ -62,12 +62,7 @@ export default function RequestCard({ request, setReload }: Props) {
       setReload(prev => !prev);
     }
     catch (err) {
-      if (axios.isAxiosError(err)) {
-        showToast(PopupType.Danger, err.response?.data);
-      }
-      else {
-        showToast(PopupType.Danger, `Unkown error: ${err}`);
-      }
+      handleError(err);
     }
     finally {
       setLoading(false);
@@ -82,12 +77,7 @@ export default function RequestCard({ request, setReload }: Props) {
       setReload(prev => !prev);
     }
     catch (err) {
-      if (axios.isAxiosError(err)) {
-        showToast(PopupType.Danger, err.response?.data);
-      }
-      else {
-        showToast(PopupType.Danger, `Unkown error: ${err}`);
-      }
+      handleError(err);
     }
     finally {
       setLoading(false);
@@ -107,12 +97,7 @@ export default function RequestCard({ request, setReload }: Props) {
       setReload(prev => !prev);
     }
     catch (err) {
-      if (axios.isAxiosError(err)) {
-        showToast(PopupType.Danger, err.response?.data);
-      }
-      else {
-        showToast(PopupType.Danger, `Unkown error: ${err}`);
-      }
+      handleError(err);
     }
     finally {
       setLoading(false);

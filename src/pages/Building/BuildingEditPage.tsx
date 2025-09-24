@@ -3,16 +3,13 @@ import CreateBuildingPage from "./CreateBuildingPage";
 import { useEffect, useState } from "react";
 import type { Building } from "../../types/building";
 import { getBuildingById } from "../../services/buildingService";
-import axios from "axios";
-import { PopupType, useToast } from "../../hooks/useToast";
 import FullScreenLoader from "../../components/FullScreenLoader";
+import { handleError } from "../../utils/handleError";
 
 export default function BuildingEditPage() {
   const { buildingId } = useParams<{ buildingId: string }>();
   const [building, setBuilding] = useState<Building>({} as Building);
   const [loading, setLoading] = useState<boolean>(false);
-
-  const { showToast } = useToast();
 
   useEffect(() => {
     const fetchBuilding = async () => {
@@ -23,12 +20,7 @@ export default function BuildingEditPage() {
           setBuilding(data);
         }
         catch (err) {
-          if (axios.isAxiosError(err)) {
-            showToast(PopupType.Danger, err.response?.data || err);
-          }
-          else {
-            showToast(PopupType.Danger, `Unkown error: ${err}`);
-          }
+          handleError(err);
         }
         finally {
           setLoading(false);

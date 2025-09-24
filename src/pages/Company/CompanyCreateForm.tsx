@@ -5,9 +5,9 @@ import type { CompanyToAdd, LogoUpload } from "../../types/company";
 import { PopupType, useToast } from "../../hooks/useToast";
 import { createCompany, uploadCompanyLogo } from "../../services/companyService";
 import { registerUser } from "../../services/userService";
-import axios from "axios";
 import { useNavigate } from "react-router";
 import { ArrowLeft } from "lucide-react";
+import { handleError } from "../../utils/handleError";
 
 interface Props {
   registerData: UserToAdd;
@@ -90,12 +90,7 @@ export default function CompanyCreateForm({ registerData, setStep }: Props) {
       navigate("/login");
     }
     catch (err) {
-      if (axios.isAxiosError(err)) {
-        showToast(PopupType.Danger, err.response?.data);
-      }
-      else {
-        showToast(PopupType.Danger, `Unkown error: ${err}`);
-      }
+      handleError(err);
     }
     finally {
       setLoading(false);
@@ -108,12 +103,7 @@ export default function CompanyCreateForm({ registerData, setStep }: Props) {
         await uploadCompanyLogo({ ...logoData, id: companyId });
       }
       catch (err) {
-        if (axios.isAxiosError(err)) {
-          showToast(PopupType.Danger, err.response?.data);
-        }
-        else {
-          showToast(PopupType.Danger, `Unkown error: ${err}`);
-        }
+        handleError(err);
       }
     }
   };
@@ -135,12 +125,7 @@ export default function CompanyCreateForm({ registerData, setStep }: Props) {
       await handleRegister(companyId);
     }
     catch (err) {
-      if (axios.isAxiosError(err)) {
-        showToast(PopupType.Danger, err.response?.data);
-      }
-      else {
-        showToast(PopupType.Danger, `Unkown error: ${err}`);
-      }
+      handleError(err);
     }
   };
 

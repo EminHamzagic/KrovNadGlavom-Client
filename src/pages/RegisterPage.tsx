@@ -4,10 +4,10 @@ import { Building, Building2, Eye, EyeOff, UserRound } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import { PopupType, useToast } from "../hooks/useToast";
 import { registerUser, uploadUserPfp } from "../services/userService";
-import axios from "axios";
 import CompanyCreateForm from "./Company/CompanyCreateForm";
 import type { LogoUpload } from "../types/company";
 import AgencyCreateForm from "./Agency/AgencyCreateForm";
+import { handleError } from "../utils/handleError";
 
 export default function RegisterPage() {
   const [registerData, setRegisterData] = useState<UserToAdd>({
@@ -100,12 +100,7 @@ export default function RegisterPage() {
         await uploadUserPfp({ ...logoData, id: userId });
       }
       catch (err) {
-        if (axios.isAxiosError(err)) {
-          showToast(PopupType.Danger, err.response?.data);
-        }
-        else {
-          showToast(PopupType.Danger, `Unkown error: ${err}`);
-        }
+        handleError(err);
       }
     }
   };
@@ -130,12 +125,7 @@ export default function RegisterPage() {
         navigate("/login");
       }
       catch (err) {
-        if (axios.isAxiosError(err)) {
-          showToast(PopupType.Danger, err.response?.data);
-        }
-        else {
-          showToast(PopupType.Danger, `Unkown error: ${err}`);
-        }
+        handleError(err);
       }
       finally {
         setLoading(false);

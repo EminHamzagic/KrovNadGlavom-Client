@@ -2,13 +2,13 @@ import { useContext, useState } from "react";
 import logo from "/KrovNadGlavomLogo.png";
 import type { LoginData } from "../types/user";
 import { Link, useNavigate } from "react-router";
-import axios from "axios";
 import { UserContext } from "../context/UserContext";
 import { GoogleLogin } from "@react-oauth/google";
 import type { CredentialResponse } from "@react-oauth/google";
 import { PopupType, useToast } from "../hooks/useToast";
 import { loginUser, loginUserGoogle } from "../services/userService";
 import { Eye, EyeOff } from "lucide-react";
+import { handleError } from "../utils/handleError";
 
 export default function LoginPage() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -46,12 +46,7 @@ export default function LoginPage() {
         navigate("/dashboard");
       }
       catch (err) {
-        if (axios.isAxiosError(err)) {
-          showToast(PopupType.Danger, err.response?.data);
-        }
-        else {
-          showToast(PopupType.Danger, `Unkown error: ${err}`);
-        }
+        handleError(err);
       }
       finally {
         setLoading(false);
@@ -70,13 +65,7 @@ export default function LoginPage() {
       navigate("/dashboard");
     }
     catch (err) {
-      if (axios.isAxiosError(err)) {
-        showToast(PopupType.Danger, err.response?.data);
-      }
-      else {
-        showToast(PopupType.Danger, `Unkown error: ${err}`);
-        setLoading(false);
-      }
+      handleError(err);
     }
     finally {
       setLoading(false);
