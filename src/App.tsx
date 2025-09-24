@@ -19,6 +19,7 @@ import { RequireRoleRoute } from "./components/Auth/RequireRoleRoute";
 import AgencyPage from "./pages/Agency/AgencyPage";
 import ContractsPage from "./pages/Contract/ContractsPage";
 import ApartmentsPage from "./pages/Apartment/ApartmentsPage";
+import ApartmentDetailsPage from "./pages/Apartment/ApartmentDetailsPage";
 
 function App() {
   return (
@@ -90,6 +91,12 @@ function App() {
                 path="/apartments"
                 element={
                   <RequireRoleRoute roles={["User"]} element={<ApartmentsPage />} />
+                }
+              />
+              <Route
+                path="/apartments/:apartmentId"
+                element={
+                  <RequireRoleRoute roles={["User"]} element={<ApartmentDetailsPage />} />
                 }
               />
             </Route>

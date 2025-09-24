@@ -33,3 +33,30 @@ export interface ApartmentToAdd {
 export interface MultipleApartmentsToAdd {
   apartments: ApartmentToAdd[];
 }
+
+export interface QueryParameters {
+  pageNumber: number;
+  pageSize: number;
+  searchText: string;
+  sortProperty?: string;
+  sortType: "asc" | "desc";
+  city?: string;
+  address?: string;
+  area?: number;
+  roomCount?: number;
+  balconyCount?: number;
+  floor?: number;
+  orientation?: string;
+}
+
+export interface PaginationParams {
+  TotalCount: number;
+  PageNumber: number;
+  PageSize: number;
+  TotalPages: number;
+}
+
+export interface PaginatedResult<T> {
+  data: T[];
+  pagination: PaginationParams;
+}

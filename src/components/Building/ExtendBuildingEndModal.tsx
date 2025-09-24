@@ -5,7 +5,7 @@ import Modal from "../Modal";
 import { PopupType, useToast } from "../../hooks/useToast";
 import DatePicker from "react-datepicker";
 import { extendBuildingEndDate } from "../../services/buildingService";
-import axios from "axios";
+import { handleError } from "../../utils/handleError";
 
 interface Props {
   building: Building;
@@ -36,12 +36,7 @@ export default function ExtendBuildingEndModal({ building, isOpen, setIsOpen, se
       setReload(prev => !prev);
     }
     catch (err) {
-      if (axios.isAxiosError(err)) {
-        showToast(PopupType.Danger, err.response?.data);
-      }
-      else {
-        showToast(PopupType.Danger, `Unkown error: ${err}`);
-      }
+      handleError(err);
     }
     finally {
       setLoading(false);

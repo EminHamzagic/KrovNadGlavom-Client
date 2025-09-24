@@ -5,7 +5,7 @@ import Modal from "../Modal";
 import { getOrientationLabel, OrientationEnum } from "../../utils/orientation";
 import { PopupType, useToast } from "../../hooks/useToast";
 import { createApartment, createMultipleApartment, editApartment } from "../../services/apartmentService";
-import axios from "axios";
+import { handleError } from "../../utils/handleError";
 
 interface Props {
   floorCount: number;
@@ -103,12 +103,7 @@ export default function CreateApartmentModal({ floorCount, isOpen, setIsOpen, bu
       setReload(prev => !prev);
     }
     catch (err) {
-      if (axios.isAxiosError(err)) {
-        showToast(PopupType.Danger, err.response?.data || err.message);
-      }
-      else {
-        showToast(PopupType.Danger, `Unkown error: ${err}`);
-      }
+      handleError(err);
     }
     finally {
       setLoading(false);
@@ -155,12 +150,7 @@ export default function CreateApartmentModal({ floorCount, isOpen, setIsOpen, bu
         }
       }
       catch (err) {
-        if (axios.isAxiosError(err)) {
-          showToast(PopupType.Danger, err.response?.data || err.message);
-        }
-        else {
-          showToast(PopupType.Danger, `Unkown error: ${err}`);
-        }
+        handleError(err);
       }
       finally {
         setLoading(false);

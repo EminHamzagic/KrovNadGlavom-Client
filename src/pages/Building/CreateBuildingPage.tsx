@@ -6,12 +6,12 @@ import MapSearchControl from "../../components/MapSearchControl";
 import { UserContext } from "../../context/UserContext";
 import { createBuiding, editBuilding } from "../../services/buildingService";
 import { PopupType, useToast } from "../../hooks/useToast";
-import axios from "axios";
 import { useNavigate } from "react-router";
 import SetBuildingApartments from "../../components/Apartment/SetBuildingApartments";
 import type { ApartmentToAdd } from "../../types/apartment";
 import LocationMarker from "../../components/LocationMarker";
 import Stepper from "../../components/Stepper";
+import { handleError } from "../../utils/handleError";
 
 interface Props {
   building?: Building;
@@ -153,12 +153,7 @@ export default function CreateBuildingPage({ building }: Props) {
       navigate("/buildings");
     }
     catch (err) {
-      if (axios.isAxiosError(err)) {
-        showToast(PopupType.Danger, err.response?.data);
-      }
-      else {
-        showToast(PopupType.Danger, `Unkown error: ${err}`);
-      }
+      handleError(err);
     }
     finally {
       setLoading(false);
@@ -187,12 +182,7 @@ export default function CreateBuildingPage({ building }: Props) {
         navigate(`/buildings/${building?.id}`);
       }
       catch (err) {
-        if (axios.isAxiosError(err)) {
-          showToast(PopupType.Danger, err.response?.data);
-        }
-        else {
-          showToast(PopupType.Danger, `Unkown error: ${err}`);
-        }
+        handleError(err);
       }
       finally {
         setLoading(false);

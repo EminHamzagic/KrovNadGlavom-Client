@@ -1,4 +1,4 @@
-import type { ApartmentToAdd, MultipleApartmentsToAdd } from "../types/apartment";
+import type { Apartment, ApartmentToAdd, MultipleApartmentsToAdd, PaginatedResult, QueryParameters } from "../types/apartment";
 import { API_URL } from "../config";
 import apiClient from "../utils/apiClient";
 
@@ -28,4 +28,24 @@ export async function deleteApartment(
 ): Promise<string> {
   const { data } = await apiClient.delete<string>(`${API_URL}/Apartments/${id}`);
   return data;
+}
+
+export async function getAvailableApartments(
+  parameters: QueryParameters,
+): Promise<PaginatedResult<Apartment>> {
+  const searchParams = new URLSearchParams();
+
+  Object.entries(parameters).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== "" && value !== 0) {
+      searchParams.append(key, String(value));
+    }
+  });
+
+  const queryString = searchParams.toString();
+  const url = `${API_URL}/Apartments${queryString ? `?${queryString}` : ""}`;
+
+  const { data, headers } = await apiClient.get<Apartment[]>(url);
+
+  const pagination = JSON.parse(headers["x-pagination"]);
+  return { data, pagination };
 }

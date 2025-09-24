@@ -7,8 +7,8 @@ import { PopupType, useToast } from "../../hooks/useToast";
 import { createAgencyRequest } from "../../services/agencyRequestService";
 import { StatusEnum } from "../../types/agencyRequest";
 import type { AgencyRequestToAdd } from "../../types/agencyRequest";
-import axios from "axios";
 import { Hourglass, Send } from "lucide-react";
+import { handleError } from "../../utils/handleError";
 
 interface Props {
   building: Building;
@@ -42,12 +42,7 @@ export default function SendRequestButtonModal({ building, setReload }: Props) {
       setReload(prev => !prev);
     }
     catch (err) {
-      if (axios.isAxiosError(err)) {
-        showToast(PopupType.Danger, err.response?.data || err);
-      }
-      else {
-        showToast(PopupType.Danger, `Unkown error: ${err}`);
-      }
+      handleError(err);
     }
     finally {
       setLoading(false);

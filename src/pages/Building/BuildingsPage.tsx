@@ -1,21 +1,18 @@
 import { useContext, useEffect, useState } from "react";
-import axios from "axios";
 import { Building as BuildingIcon } from "lucide-react";
 import { useNavigate } from "react-router";
 import { UserContext } from "../../context/UserContext";
 import type { Building } from "../../types/building";
-import { PopupType, useToast } from "../../hooks/useToast";
 import { getBuildings, getCompanyBuildings } from "../../services/buildingService";
 import FullScreenLoader from "../../components/FullScreenLoader";
 import { RequireRole } from "../../components/Auth/RequireRole";
+import { handleError } from "../../utils/handleError";
 
 export default function BuildingsPage() {
   const { user } = useContext(UserContext);
   const [loading, setLoading] = useState<boolean>(false);
   const [buildings, setBuildings] = useState<Building[]>([]);
   const navigate = useNavigate();
-
-  const { showToast } = useToast();
 
   useEffect(() => {
     const fetchBuildings = async () => {
@@ -31,12 +28,7 @@ export default function BuildingsPage() {
         }
       }
       catch (err) {
-        if (axios.isAxiosError(err)) {
-          showToast(PopupType.Danger, err.response?.data || err);
-        }
-        else {
-          showToast(PopupType.Danger, `Unkown error: ${err}`);
-        }
+        handleError(err);
       }
       finally {
         setLoading(false);
