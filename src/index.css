@@ -2,7 +2,7 @@
 
 @theme {
   --color-primary: #c7671e;
-  --color-primary-light: #c7671e;
+  --color-primary-light: #e0a679;
   --color-primary-dark-light: #a35417;
 
   --color-secondary: #2b2d41;
@@ -258,7 +258,7 @@ hover:text-primary hover:before:!bg-primary dark:before:bg-gray-500 dark:hover:b
     @apply relative flex items-center justify-center cursor-pointer rounded-md border px-5 py-2 text-sm shadow-[0_10px_20px_-10px] outline-none transition duration-300 hover:shadow-none;
   }
   .btn:focus{
-    @apply outline-none ring-2 ring-offset-2 ring-primary-dark-light;
+    @apply outline-none ring-2 ring-offset-2 ring-primary-light;
   }
   .btn-lg {
     @apply px-7 py-2.5 text-base;
