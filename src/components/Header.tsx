@@ -14,7 +14,7 @@ export default function Header({
 }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { logout } = useContext(UserContext);
+  const { logout, user } = useContext(UserContext);
 
   const isActive = (path: string) => location.pathname.startsWith(path);
 
@@ -108,7 +108,7 @@ export default function Header({
             <RequireRole roles={["Company"]}>
               <button
                 onClick={() => {
-                  navigate("/company");
+                  navigate(`/company/${user.constructionCompanyId}`);
                   setSidebarOpen(false);
                 }}
                 className={`${baseClasses} ${
@@ -123,7 +123,7 @@ export default function Header({
             <RequireRole roles={["Agency"]}>
               <button
                 onClick={() => {
-                  navigate("/agency");
+                  navigate(`/agency/${user.agencyId}`);
                   setSidebarOpen(false);
                 }}
                 className={`${baseClasses} ${

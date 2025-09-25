@@ -55,7 +55,7 @@ function App() {
 
               {/* Kompanija rute */}
               <Route
-                path="/company"
+                path="/company/:companyId"
                 element={
                   <RequireRoleRoute roles={["Company"]} element={<CompanyPage />} />
                 }
@@ -74,7 +74,7 @@ function App() {
 
               {/* Agencija rute */}
               <Route
-                path="/agency"
+                path="/agency/:agencyId"
                 element={
                   <RequireRoleRoute roles={["Agency"]} element={<AgencyPage />} />
                 }

@@ -1,5 +1,5 @@
 import { API_URL } from "../config";
-import type { AgencyToAdd } from "../types/agency";
+import type { Agency, AgencyToAdd } from "../types/agency";
 import type { LogoUpload } from "../types/company";
 import apiClient from "../utils/apiClient";
 
@@ -8,6 +8,14 @@ export async function createAgency(
 ): Promise<string> {
   const { data } = await apiClient.post<string>(`${API_URL}/Agencies`, createData);
   return data;
+}
+
+export async function getAgency(id: string): Promise<Agency> {
+  const { data } = await apiClient.get<Agency>(`${API_URL}/Agencies/${id}`);
+  return data;
+}
+export async function updateAgency(id: string, updateData: AgencyToAdd): Promise<void> {
+  await apiClient.put(`${API_URL}/Agencies/${id}`, updateData);
 }
 
 export async function uploadAgencyLogo(

@@ -10,6 +10,15 @@ export interface Company {
   description: string;
   bankAccountNumber: string;
 }
+export interface CompanyToUpdate {
+  name: string;
+  pIB: string;
+  address: string;
+  email: string;
+  phone: string;
+  city: string;
+  description: string;
+}
 
 export interface CompanyToAdd {
   name: string;
