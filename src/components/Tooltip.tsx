@@ -25,8 +25,8 @@ function Tooltip({
       {children}
       <div
         className={`absolute ${positionClasses[position]} 
-        hidden group-hover:flex whitespace-pre-line 
-        bg-gray-800 text-white text-xs px-2 py-1 rounded-md shadow-lg`}
+        hidden group-hover:inline-block
+        bg-gray-800 text-white text-xs px-2 py-1 rounded-md shadow-lg whitespace-nowrap`}
       >
         {text}
       </div>

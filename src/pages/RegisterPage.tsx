@@ -101,6 +101,7 @@ export default function RegisterPage() {
       }
       catch (err) {
         handleError(err);
+        setLoading(false);
       }
     }
   };

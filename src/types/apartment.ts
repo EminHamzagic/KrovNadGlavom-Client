@@ -14,7 +14,7 @@ export interface Apartment {
   isAvailable: boolean;
   isDeleted?: boolean;
   isReserved?: boolean;
-  canReserve: boolean;
+  canRequestDiscount: boolean;
   building: Building;
   agency?: Agency;
 }

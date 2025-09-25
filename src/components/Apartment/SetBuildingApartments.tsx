@@ -51,6 +51,8 @@ export default function SetBuildingApartments({ floorCount, buildingApartments, 
 
     if (!data.apartmentNumber.trim())
       newErrors.apartmentNumber = "Broj stana je obavezan";
+    if (data.apartmentNumber.trim().length > 15)
+      newErrors.apartmentNumber = "Broj stana ne može biti duži od 15 karaktera";
     if (!data.area || data.area <= 0)
       newErrors.area = "Površina mora biti veća od 0";
     if (!data.floor || data.floor <= 0)
