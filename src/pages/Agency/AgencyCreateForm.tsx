@@ -18,7 +18,7 @@ interface Props {
 export default function AgencyCreateForm({ registerData, setStep }: Props) {
   const [companyData, setCompanyData] = useState<AgencyToAdd>({
     name: "",
-    pIB: "",
+    pib: "",
     address: "",
     email: "",
     phone: "",
@@ -51,8 +51,8 @@ export default function AgencyCreateForm({ registerData, setStep }: Props) {
 
     if (!data.name.trim())
       newErrors.name = "Naziv je obavezan";
-    if (!data.pIB.trim())
-      newErrors.pIB = "PIB je obavezan";
+    if (!data.pib.trim())
+      newErrors.pib = "PIB je obavezan";
     if (!data.address.trim())
       newErrors.address = "Adresa je obavezna";
     if (!data.city.trim())
@@ -182,17 +182,17 @@ export default function AgencyCreateForm({ registerData, setStep }: Props) {
               <p className="text-danger text-sm mt-1">{errors.name}</p>
             )}
           </div>
-          <div className={`col-span-1 ${errors.pIB && "has-error"}`}>
+          <div className={`col-span-1 ${errors.pib && "has-error"}`}>
             <label className="form-label">PIB:</label>
             <input
               type="text"
               className="form-input"
               placeholder="Unesite PIB"
-              value={companyData.pIB}
-              onChange={e => handleChange("pIB", e.target.value)}
+              value={companyData.pib}
+              onChange={e => handleChange("pib", e.target.value)}
             />
-            {errors.pIB && (
-              <p className="text-danger text-sm mt-1">{errors.pIB}</p>
+            {errors.pib && (
+              <p className="text-danger text-sm mt-1">{errors.pib}</p>
             )}
           </div>
 
