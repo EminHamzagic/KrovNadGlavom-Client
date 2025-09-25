@@ -1,22 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
-import type { Company } from "../../types/company";
-import { getCompany, updateCompany } from "../../services/companyService";
+import type { Company, CompanyToUpdate, LogoUpload } from "../../types/company";
+import { getCompany, updateCompany, uploadCompanyLogo } from "../../services/companyService";
 import { handleError } from "../../utils/handleError";
 import FullScreenLoader from "../../components/FullScreenLoader";
 import { PenLine } from "lucide-react";
 import Modal from "../../components/Modal";
 import { PopupType, useToast } from "../../hooks/useToast";
-
-interface CompanyToUpdate {
-  name: string;
-  pIB: string;
-  address: string;
-  email: string;
-  phone: string;
-  city: string;
-  description: string;
-}
 
 export default function CompanyPage() {
   const { companyId } = useParams<{ companyId: string }>();
@@ -26,6 +16,9 @@ export default function CompanyPage() {
   const [isEditOpen, setIsEditOpen] = useState<boolean>(false);
   const [editForm, setEditForm] = useState<CompanyToUpdate>({} as CompanyToUpdate);
   const [reload, setReload] = useState<boolean>(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [logoData, setLogoData] = useState<LogoUpload | null>(null);
 
   const { showToast } = useToast();
 
@@ -37,25 +30,16 @@ export default function CompanyPage() {
           const data = await getCompany(companyId);
           // console.log("Company data received:", data);
           setCompany(data);
-          // Initialize edit form with current data (excluding bankAccountNumber as per backend DTO)
           setEditForm({
             name: data.name,
-            pIB: data.pIB,
+            pib: data.pib,
             address: data.address,
             email: data.email,
             phone: data.phone,
             city: data.city,
             description: data.description,
+            bankAccountNumber: data.bankAccountNumber,
           });
-          // console.log("Company edit form initialized:", {
-          //   name: data.name,
-          //   pIB: data.pIB,
-          //   address: data.address,
-          //   email: data.email,
-          //   phone: data.phone,
-          //   city: data.city,
-          //   description: data.description,
-          // });
         }
         catch (err) {
           handleError(err);
@@ -69,11 +53,40 @@ export default function CompanyPage() {
     fetchCompany();
   }, [reload]);
 
+  const handleLogoClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setLogoData({ id: "", file });
+      const reader = new FileReader();
+      reader.onload = () => {
+        setLogoPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleFileUpload = async (companyId: string) => {
+    if (logoData) {
+      try {
+        await uploadCompanyLogo({ ...logoData, id: companyId });
+      }
+      catch (err) {
+        handleError(err);
+        setLoading(false);
+      }
+    }
+  };
+
   const handleEdit = async () => {
     if (companyId) {
       try {
         setLoadingModal(true);
         await updateCompany(companyId, editForm);
+        await handleFileUpload(companyId);
         showToast(PopupType.Success, "Kompanija je uspešno ažurirana");
         setIsEditOpen(false);
         setReload(!reload);
@@ -113,13 +126,8 @@ export default function CompanyPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {company.logoUrl && (
-            <div className="flex flex-col mb-3 col-span-full md:col-span-1">
-              <span className="font-bold mb-2">Logo:</span>
-              <img
-                src={company.logoUrl}
-                alt={`${company.name} logo`}
-                className="w-32 h-32 object-contain rounded-md border"
-              />
+            <div className="flex justify-center mb-7 col-span-full">
+              <img src={company.logoUrl} alt="Logo" className="w-30 h-30 rounded-full object-cover" />
             </div>
           )}
 
@@ -130,7 +138,7 @@ export default function CompanyPage() {
 
           <div className="flex flex-col mb-3">
             <span className="font-bold">PIB:</span>
-            <span>{company.pIB || "N/A"}</span>
+            <span>{company.pib || "N/A"}</span>
           </div>
 
           <div className="flex flex-col mb-3">
@@ -145,7 +153,7 @@ export default function CompanyPage() {
 
           <div className="flex flex-col mb-3">
             <span className="font-bold">Grad:</span>
-            <span>{company.city}</span>
+            <span>{company.city || "/"}</span>
           </div>
 
           <div className="flex flex-col mb-3">
@@ -174,6 +182,33 @@ export default function CompanyPage() {
         size="xl"
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="col-span-full flex flex-col items-center">
+            <label className="form-label mb-2">Logo:</label>
+            <div
+              onClick={handleLogoClick}
+              className="w-34 h-34 rounded-full border-2 border-dashed border-primary flex items-center justify-center cursor-pointer overflow-hidden hover:bg-primary/10 transition"
+            >
+              {logoPreview
+                ? (
+                    <img
+                      src={logoPreview}
+                      alt="Logo preview"
+                      className="w-full h-full object-cover"
+                    />
+                  )
+                : (
+                    <span className="text-sm text-primary">Klikni za upload</span>
+                  )}
+            </div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleFileChange}
+            />
+          </div>
+
           <div className="flex flex-col">
             <label className="font-bold mb-2">Naziv kompanije:</label>
             <input
@@ -181,7 +216,7 @@ export default function CompanyPage() {
               name="name"
               value={editForm.name || ""}
               onChange={handleInputChange}
-              className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+              className="form-input"
             />
           </div>
 
@@ -189,10 +224,10 @@ export default function CompanyPage() {
             <label className="font-bold mb-2">PIB:</label>
             <input
               type="text"
-              name="pIB"
-              value={editForm.pIB || ""}
+              name="pib"
+              value={editForm.pib || ""}
               onChange={handleInputChange}
-              className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+              className="form-input"
             />
           </div>
 
@@ -203,7 +238,7 @@ export default function CompanyPage() {
               name="email"
               value={editForm.email || ""}
               onChange={handleInputChange}
-              className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+              className="form-input"
             />
           </div>
 
@@ -214,7 +249,7 @@ export default function CompanyPage() {
               name="phone"
               value={editForm.phone || ""}
               onChange={handleInputChange}
-              className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+              className="form-input"
             />
           </div>
 
@@ -225,7 +260,7 @@ export default function CompanyPage() {
               name="city"
               value={editForm.city || ""}
               onChange={handleInputChange}
-              className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+              className="form-input"
             />
           </div>
 
@@ -236,7 +271,18 @@ export default function CompanyPage() {
               name="address"
               value={editForm.address || ""}
               onChange={handleInputChange}
-              className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+              className="form-input"
+            />
+          </div>
+
+          <div className="flex flex-col col-span-full">
+            <label className="font-bold mb-2">Broj žiro računa:</label>
+            <input
+              type="text"
+              name="bankAccountNumber"
+              value={editForm.bankAccountNumber || ""}
+              onChange={handleInputChange}
+              className="form-input"
             />
           </div>
 
@@ -247,7 +293,7 @@ export default function CompanyPage() {
               value={editForm.description || ""}
               onChange={handleInputChange}
               rows={4}
-              className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+              className="form-input"
             />
           </div>
         </div>

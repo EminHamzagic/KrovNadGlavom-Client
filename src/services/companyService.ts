@@ -9,7 +9,7 @@ export async function createCompany(
   return data;
 }
 export async function getCompany(id: string): Promise<Company> {
-  const { data } = await apiClient.get<Company>(`${API_URL}/Companies/${id}`);
+  const { data } = await apiClient.get<Company>(`${API_URL}/ConstructionCompanies/${id}`);
   return data;
 }
 export async function updateCompany(id: string, updateData: CompanyToUpdate): Promise<void> {
