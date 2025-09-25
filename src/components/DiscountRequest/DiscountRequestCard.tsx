@@ -1,24 +1,24 @@
-import { Link } from "react-router";
-import { StatusEnum } from "../../types/agencyRequest";
-import type { AgencyRequest, AgencyRequestToUpdate } from "../../types/agencyRequest";
-import Modal from "../../components/Modal";
 import { useContext, useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
-import { deleteBuildingRequest, updateBuildingRequest } from "../../services/agencyRequestService";
-import { PopupType, useToast } from "../../hooks/useToast";
+import type { DiscountRequest, DiscountRequestToUpdate } from "../../types/discountRequest";
+import { StatusEnum } from "../../types/agencyRequest";
+import Modal from "../Modal";
 import { CircleQuestionMark, MoreVertical, Trash } from "lucide-react";
-import Tooltip from "../../components/Tooltip";
-import { UserContext } from "../../context/UserContext";
+import { Link } from "react-router";
 import { handleError } from "../../utils/handleError";
+import { deleteDiscountRequest, updateDiscountRequest } from "../../services/discountRequestService";
+import { PopupType, useToast } from "../../hooks/useToast";
+import { UserContext } from "../../context/UserContext";
+import Tooltip from "../Tooltip";
 
 interface Props {
-  request: AgencyRequest;
+  request: DiscountRequest;
   setReload: Dispatch<SetStateAction<boolean>>;
 }
 
 const statusConfig: Record<
-  string,
-  { text: string; className: string }
+	string,
+	{ text: string; className: string }
 > = {
   [StatusEnum.Pending]: {
     text: "Na čekanju",
@@ -34,15 +34,15 @@ const statusConfig: Record<
   },
 };
 
-export default function RequestCard({ request, setReload }: Props) {
+export default function DiscountRequestCard({ request, setReload }: Props) {
   const [isOpenReject, setIsOpenReject] = useState<boolean>(false);
   const [isOpenAccept, setIsOpenAccept] = useState<boolean>(false);
   const [isOpenMenu, setIsOpenMenu] = useState<boolean>(false);
   const [isOpenDelete, setIsOpenDelete] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [updateData, setUpdateData] = useState<AgencyRequestToUpdate>({
+  const [updateData, setUpdateData] = useState<DiscountRequestToUpdate>({
     status: StatusEnum.Pending,
-    rejectionReason: "",
+    reason: "",
   });
 
   const { showToast } = useToast();
@@ -53,11 +53,11 @@ export default function RequestCard({ request, setReload }: Props) {
     const sendData = {
       ...updateData,
       status: StatusEnum.Rejected,
-    } as AgencyRequestToUpdate;
+    } as DiscountRequestToUpdate;
 
     try {
       setLoading(true);
-      await updateBuildingRequest(request.id, sendData);
+      await updateDiscountRequest(request.id, sendData);
       showToast(PopupType.Success, "Uspšno ste odbili zahtev");
       setReload(prev => !prev);
     }
@@ -72,7 +72,7 @@ export default function RequestCard({ request, setReload }: Props) {
   const handleDelete = async () => {
     try {
       setLoading(true);
-      await deleteBuildingRequest(request.id);
+      await deleteDiscountRequest(request.id);
       showToast(PopupType.Success, "Uspšno ste izbrisali zahtev zahtev");
       setReload(prev => !prev);
     }
@@ -86,13 +86,13 @@ export default function RequestCard({ request, setReload }: Props) {
 
   const handleAccept = async () => {
     const sendData = {
-      rejectionReason: "",
+      reason: "",
       status: StatusEnum.Approved,
-    } as AgencyRequestToUpdate;
+    } as DiscountRequestToUpdate;
 
     try {
       setLoading(true);
-      await updateBuildingRequest(request.id, sendData);
+      await updateDiscountRequest(request.id, sendData);
       showToast(PopupType.Success, "Uspšno ste prihvatili zahtev");
       setReload(prev => !prev);
     }
@@ -143,25 +143,31 @@ export default function RequestCard({ request, setReload }: Props) {
         )}
         {getUserType() === "Agency" && (
           <div className="text-gray-500 flex gap-2 mt-2">
-            <span>Kompanija:</span>
-            <Link to="" className="text-primary hover:underline">{request.company.name}</Link>
+            <span>Korisnik:</span>
+            <span>{`${request.user.name} ${request.user.lastname}`}</span>
+          </div>
+        )}
+        {getUserType() === "User" && (
+          <div className="text-gray-500 flex gap-2 mt-2">
+            <span>Agencija:</span>
+            <Link to="" className="text-primary hover:underline">{request.agency.name}</Link>
           </div>
         )}
         <div className="text-gray-500 flex gap-2 mt-2">
-          <span>Zgrada:</span>
-          <Link to={`/buildings/${request.buildingId}`} className="text-primary hover:underline">Vidi</Link>
+          <span>Stan:</span>
+          <Link to={`/apartments/${request.apartmentId}`} className="text-primary hover:underline">Vidi</Link>
         </div>
         <div className="text-gray-500 flex gap-2 mt-2">
-          <span>Procenat provizije:</span>
+          <span>Procenat popusta:</span>
           <span>
-            {request.commissionPercentage}
+            {request.percentage}
             %
           </span>
         </div>
-        {request.rejectionReason && (
+        {request.reason && (
           <div className="text-gray-500 flex gap-2 mt-2">
             <span>Razlog odbijanja:</span>
-            <Tooltip position="top" text={request.rejectionReason}>
+            <Tooltip position="top" text={request.reason}>
               <div className="cursor-pointer">
                 <CircleQuestionMark size={20} />
               </div>
@@ -171,13 +177,13 @@ export default function RequestCard({ request, setReload }: Props) {
         )}
 
       </div>
-      {request.status === StatusEnum.Pending && getUserType() === "Company" && (
+      {request.status === StatusEnum.Pending && (getUserType() === "Company" || (getUserType() === "Agency" && !request.constructionCompanyId)) && (
         <div className="col-span-3 mt-2 flex gap-5 w-full">
           <button
             className="btn btn-danger w-full"
             onClick={() => {
               setIsOpenReject(true);
-              setUpdateData({ status: StatusEnum.Pending, rejectionReason: "" });
+              setUpdateData({ status: StatusEnum.Pending, reason: "" });
             }}
           >
             Odbij
@@ -189,7 +195,7 @@ export default function RequestCard({ request, setReload }: Props) {
       <Modal isOpen={isOpenReject} onClose={() => setIsOpenReject(false)} title="Odbij zahtev" size="xl" loading={loading} onConfirm={handleReject}>
         <div className="flex flex-col">
           <label>Razlog za odbijanje</label>
-          <textarea className="form-input h-30" value={updateData.rejectionReason} onChange={e => setUpdateData({ ...updateData, rejectionReason: e.target.value })} placeholder="Unesite razlog za odbijanje"></textarea>
+          <textarea className="form-input h-30" value={updateData.reason} onChange={e => setUpdateData({ ...updateData, reason: e.target.value })} placeholder="Unesite razlog za odbijanje"></textarea>
         </div>
       </Modal>
 

@@ -103,9 +103,7 @@ function App() {
               />
               <Route
                 path="/apartments/:apartmentId"
-                element={
-                  <RequireRoleRoute roles={["User"]} element={<ApartmentDetailsPage />} />
-                }
+                element={<ApartmentDetailsPage />}
               />
               <Route
                 path="/apartments/:apartmentId/buy"

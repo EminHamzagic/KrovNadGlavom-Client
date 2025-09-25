@@ -8,6 +8,7 @@ import { PopupType, useToast } from "../../hooks/useToast";
 import type { ContractToAdd } from "../../types/contract";
 import { UserContext } from "../../context/UserContext";
 import { createContract } from "../../services/contractService";
+import { StatusEnum } from "../../types/agencyRequest";
 
 export default function ApartmentBuyPage() {
   const { apartmentId } = useParams<{ apartmentId: string }>();
@@ -16,6 +17,7 @@ export default function ApartmentBuyPage() {
   const [loadingBuy, setLoadingBuy] = useState<boolean>(false);
   const [apartment, setApartment] = useState<Apartment>({} as Apartment);
   const [paymentLength, setPaymentLength] = useState<number>(0);
+  const [price, setPrice] = useState<number>(0);
   const [installmentCount, setInstallmentCount] = useState<number>(0);
   const [installmentAmount, setInstallmentAmount] = useState<number>(0);
   const [installmentText, setInstallmentText] = useState<string>("");
@@ -24,6 +26,17 @@ export default function ApartmentBuyPage() {
   const { showToast } = useToast();
   const navigate = useNavigate();
 
+  const getDiscountPrice = (data: Apartment): number => {
+    if (data.discountRequest && data.discountRequest.status === StatusEnum.Approved) {
+      const price = data.area * (data.building.priceList?.pricePerM2 ?? 1);
+      const newPrice = price - price * ((data.discountRequest?.percentage ?? 1) / 100);
+      return Math.floor(newPrice);
+    }
+    else {
+      return data.area * (data.building.priceList?.pricePerM2 ?? 1);
+    }
+  };
+
   useEffect(() => {
     const fetchApartment = async () => {
       if (apartmentId) {
@@ -31,6 +44,7 @@ export default function ApartmentBuyPage() {
           setLoading(true);
           const data = await getApartmentById(apartmentId);
           setApartment(data);
+          setPrice(getDiscountPrice(data));
         }
         catch (err) {
           handleError(err);
@@ -48,14 +62,13 @@ export default function ApartmentBuyPage() {
     if (!apartment?.area || !apartment?.building?.priceList?.pricePerM2)
       return;
 
-    const totalPrice = apartment.area * apartment.building.priceList.pricePerM2;
     const totalInstallments = paymentLength * 12;
 
     setInstallmentCount(totalInstallments);
 
     if (totalInstallments > 0) {
-      const baseInstallment = Math.floor(totalPrice / totalInstallments);
-      const remainder = totalPrice - baseInstallment * (totalInstallments - 1);
+      const baseInstallment = Math.floor(price / totalInstallments);
+      const remainder = price - baseInstallment * (totalInstallments - 1);
       setInstallmentAmount(baseInstallment);
 
       if (remainder === baseInstallment) {
@@ -86,7 +99,7 @@ export default function ApartmentBuyPage() {
       userId: user.id,
       agencyId: apartment.agency?.id,
       apartmentId: apartment.id,
-      price: apartment.area * (apartment.building.priceList?.pricePerM2 ?? 1),
+      price,
       installmentAmount,
       installmentCount,
     } as ContractToAdd;
@@ -117,7 +130,7 @@ export default function ApartmentBuyPage() {
           <div className="col-span-1 sm:col-span-3 flex flex-col mb-2">
             <span className="font-bold">Cena stana:</span>
             <span>
-              {apartment.area * (apartment.building.priceList?.pricePerM2 ?? 1)}
+              {price}
               €
             </span>
           </div>
