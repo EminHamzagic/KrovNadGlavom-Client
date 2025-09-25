@@ -96,7 +96,10 @@ export default function BuildingDetailsPage() {
             </div>
             <div className="col-span-1 flex flex-col mb-3">
               <span className="font-bold">Površina placa:</span>
-              <span>{building.area}</span>
+              <span>
+                {building.area}
+                m²
+              </span>
             </div>
             <div className="col-span-1 flex flex-col mb-3">
               <span className="font-bold">Broj spratova:</span>
@@ -145,11 +148,17 @@ export default function BuildingDetailsPage() {
 
             <div className="col-span-1 flex flex-col mb-3">
               <span className="font-bold">Cena stana po kvadratu:</span>
-              <span>{building.priceList?.pricePerM2}</span>
+              <span>
+                {building.priceList?.pricePerM2}
+                €
+              </span>
             </div>
             <div className="col-span-1 flex flex-col mb-3">
               <span className="font-bold">Cena penala izgradnje po kvadratu:</span>
-              <span>{building.priceList?.penaltyPerM2}</span>
+              <span>
+                {building.priceList?.penaltyPerM2}
+                €
+              </span>
             </div>
           </div>
           <div className="col-span-2 sm:col-span-1 flex flex-col">

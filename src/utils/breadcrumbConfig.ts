@@ -9,4 +9,5 @@ export const breadcrumbConfig: Record<string, { label: string }> = {
   "/requests": { label: "Zahtevi" },
   "/discount-requests": { label: "Zahtevi za popust" },
   "/apartments": { label: "Stanovi" },
+  "/apartments/:apartmentId/buy": { label: "Kupvina stana" },
 };

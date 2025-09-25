@@ -2,6 +2,13 @@ import type { Apartment, ApartmentToAdd, MultipleApartmentsToAdd, PaginatedResul
 import { API_URL } from "../config";
 import apiClient from "../utils/apiClient";
 
+export async function getApartmentById(
+  apartmentId: string,
+): Promise<Apartment> {
+  const { data } = await apiClient.get<Apartment>(`${API_URL}/Apartments/${apartmentId}`);
+  return data;
+}
+
 export async function createApartment(
   createData: ApartmentToAdd,
 ): Promise<string> {

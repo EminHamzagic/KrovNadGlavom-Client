@@ -20,6 +20,8 @@ import AgencyPage from "./pages/Agency/AgencyPage";
 import ContractsPage from "./pages/Contract/ContractsPage";
 import ApartmentsPage from "./pages/Apartment/ApartmentsPage";
 import ApartmentDetailsPage from "./pages/Apartment/ApartmentDetailsPage";
+import ApartmentBuyPage from "./pages/Apartment/ApartmentBuyPage";
+import ContractDetailsPage from "./pages/Contract/ContractDetailsPage";
 
 function App() {
   return (
@@ -85,6 +87,12 @@ function App() {
                   <RequireRoleRoute roles={["Agency", "User"]} element={<ContractsPage />} />
                 }
               />
+              <Route
+                path="/contracts/:contractId"
+                element={
+                  <RequireRoleRoute roles={["Agency", "User"]} element={<ContractDetailsPage />} />
+                }
+              />
 
               {/* Stanovi(Apartments) rute */}
               <Route
@@ -97,6 +105,12 @@ function App() {
                 path="/apartments/:apartmentId"
                 element={
                   <RequireRoleRoute roles={["User"]} element={<ApartmentDetailsPage />} />
+                }
+              />
+              <Route
+                path="/apartments/:apartmentId/buy"
+                element={
+                  <RequireRoleRoute roles={["User"]} element={<ApartmentBuyPage />} />
                 }
               />
             </Route>
