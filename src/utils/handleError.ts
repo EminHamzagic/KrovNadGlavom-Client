@@ -31,6 +31,9 @@ export function handleError(err: unknown) {
 
     if (typeof responseData === "string") {
       showToast(PopupType.Danger, responseData);
+      if (responseData.includes("Refresh token not found") || responseData.includes("already invalidated")) {
+        window.location.href = "/login";
+      }
     }
     else if (responseData?.errors && typeof responseData.errors === "object") {
       const messages = Object.values(responseData.errors)

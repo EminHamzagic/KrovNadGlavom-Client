@@ -105,6 +105,7 @@ export default function AgencyCreateForm({ registerData, setStep }: Props) {
       }
       catch (err) {
         handleError(err);
+        setLoading(false);
       }
     }
   };
@@ -127,6 +128,7 @@ export default function AgencyCreateForm({ registerData, setStep }: Props) {
     }
     catch (err) {
       handleError(err);
+      setLoading(false);
     }
   };
 

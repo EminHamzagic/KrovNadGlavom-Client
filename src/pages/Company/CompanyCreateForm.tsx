@@ -104,6 +104,7 @@ export default function CompanyCreateForm({ registerData, setStep }: Props) {
       }
       catch (err) {
         handleError(err);
+        setLoading(false);
       }
     }
   };
@@ -126,6 +127,7 @@ export default function CompanyCreateForm({ registerData, setStep }: Props) {
     }
     catch (err) {
       handleError(err);
+      setLoading(false);
     }
   };
 
