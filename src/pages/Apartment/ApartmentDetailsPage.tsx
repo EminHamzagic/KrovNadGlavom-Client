@@ -7,11 +7,16 @@ import FullScreenLoader from "../../components/FullScreenLoader";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import { BadgeEuro, Bookmark, Percent } from "lucide-react";
 import Tooltip from "../../components/Tooltip";
+import CreateDiscountRequestModal from "../../components/DiscountRequest/CreateDiscountRequestModal";
+import { StatusEnum } from "../../types/agencyRequest";
+import { RequireRole } from "../../components/Auth/RequireRole";
 
 export default function ApartmentDetailsPage() {
   const { apartmentId } = useParams<{ apartmentId: string }>();
 
   const [loading, setLoading] = useState<boolean>(true);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [reload, setReload] = useState<boolean>(false);
   const [apartment, setApartment] = useState<Apartment>({} as Apartment);
 
   const navigate = useNavigate();
@@ -34,7 +39,13 @@ export default function ApartmentDetailsPage() {
     };
 
     fetchApartment();
-  }, []);
+  }, [reload]);
+
+  const getDiscountPrice = (): number => {
+    const price = apartment.area * (apartment.building.priceList?.pricePerM2 ?? 1);
+    const newPrice = price - price * ((apartment.discountRequest?.percentage ?? 1) / 100);
+    return Math.floor(newPrice);
+  };
 
   if (loading) {
     return <FullScreenLoader />;
@@ -44,24 +55,33 @@ export default function ApartmentDetailsPage() {
     <div className="planel shadow-md flex-col flex justify-center bg-white rounded-md p-4 mb-10">
       <div className="flex justify-between items-center mb-10">
         <h1 className="text-3xl">Detalji stana</h1>
-        <div className="flex gap-2">
-          {apartment.canRequestDiscount && (
-            <Tooltip text="Pošalji zahtev za popust">
-              <button className="btn btn-secondary flex gap-2">
-                <Percent />
-                Popust
-              </button>
-            </Tooltip>
-          )}
-          <button className="btn btn-info flex gap-2" disabled={apartment.isReserved}>
-            <Bookmark />
-            {apartment.isReserved ? "Rezervisano" : "Rezerviši"}
-          </button>
-          <button className="btn btn-primary flex gap-2" disabled={apartment.isReserved} onClick={() => navigate(`buy`)}>
-            <BadgeEuro />
-            Kupi
-          </button>
-        </div>
+        <RequireRole roles={["User"]}>
+
+          <div className="flex gap-2">
+            {apartment.canRequestDiscount && (
+              <Tooltip text={apartment.discountRequest !== null ? "Već ste poslali zahtev za popust" : "Pošalji zahtev za popust"}>
+                <button
+                  className="btn btn-secondary flex gap-2"
+                  onClick={() => {
+                    setIsOpen(true);
+                  }}
+                  disabled={apartment.discountRequest !== null}
+                >
+                  <Percent />
+                  Popust
+                </button>
+              </Tooltip>
+            )}
+            <button className="btn btn-info flex gap-2" disabled={apartment.isReserved}>
+              <Bookmark />
+              {apartment.isReserved ? "Rezervisano" : "Rezerviši"}
+            </button>
+            <button className="btn btn-primary flex gap-2" disabled={apartment.isReserved} onClick={() => navigate(`buy`)}>
+              <BadgeEuro />
+              Kupi
+            </button>
+          </div>
+        </RequireRole>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-4 w-full">
         <div className="col-span-2 sm:col-span-3 grid grid-cols-2 sm:grid-cols-3">
@@ -109,10 +129,16 @@ export default function ApartmentDetailsPage() {
 
           <div className="col-span-1 flex flex-col mb-3">
             <span className="font-bold">Cena stana:</span>
-            <span>
+            <span className={`${apartment.discountRequest?.status === StatusEnum.Approved && "line-through mr-2"}`}>
               {apartment.area * (apartment.building.priceList?.pricePerM2 ?? 1)}
               €
             </span>
+            {apartment.discountRequest && (
+              <span className="text-red-800">
+                {getDiscountPrice()}
+                €
+              </span>
+            )}
           </div>
 
         </div>
@@ -143,6 +169,8 @@ export default function ApartmentDetailsPage() {
             : <span>Nema lokacije</span>}
         </div>
       </div>
+
+      <CreateDiscountRequestModal apartment={apartment} isOpen={isOpen} setIsOpen={setIsOpen} setReload={setReload} />
     </div>
   );
 }
