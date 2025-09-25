@@ -332,7 +332,7 @@ export default function CreateBuildingPage({ building }: Props) {
             {!building && (
               <>
                 <div className={`col-span-1 sm:col-span-2 ${errors.pricePerM2 && "has-error"}`}>
-                  <label className="form-label">Cena po kvadratu:</label>
+                  <label className="form-label">Cena po kvadratu (€):</label>
                   <input
                     type="text"
                     className="form-input"
@@ -345,7 +345,7 @@ export default function CreateBuildingPage({ building }: Props) {
                   )}
                 </div>
                 <div className={`col-span-1 sm:col-span-2 ${errors.penaltyPerM2 && "has-error"}`}>
-                  <label className="form-label">Cena penala za kašnjenje po kvadratu:</label>
+                  <label className="form-label">Cena penala za kašnjenje po kvadratu (€):</label>
                   <input
                     type="text"
                     className="form-input"
