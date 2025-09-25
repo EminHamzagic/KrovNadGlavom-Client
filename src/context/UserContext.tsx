@@ -51,6 +51,9 @@ export default function UserContextProvider({ children }: UserContextProviderPro
   const logout = () => {
     setUser({} as User);
     setTokens({} as Tokens);
+    Cookies.remove("accessToken");
+    Cookies.remove("refreshToken");
+    Cookies.remove("user");
   };
 
   const getUserType = () => {

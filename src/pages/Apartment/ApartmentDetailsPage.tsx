@@ -5,7 +5,8 @@ import { getApartmentById } from "../../services/apartmentService";
 import { handleError } from "../../utils/handleError";
 import FullScreenLoader from "../../components/FullScreenLoader";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
-import { BadgeEuro, Bookmark } from "lucide-react";
+import { BadgeEuro, Bookmark, Percent } from "lucide-react";
+import Tooltip from "../../components/Tooltip";
 
 export default function ApartmentDetailsPage() {
   const { apartmentId } = useParams<{ apartmentId: string }>();
@@ -44,12 +45,18 @@ export default function ApartmentDetailsPage() {
       <div className="flex justify-between items-center mb-10">
         <h1 className="text-3xl">Detalji stana</h1>
         <div className="flex gap-2">
-          {apartment.canReserve && (
-            <button className="btn btn-info flex gap-2" disabled={apartment.isReserved}>
-              <Bookmark />
-              {apartment.isReserved ? "Rezervisano" : "Rezerviši"}
-            </button>
+          {apartment.canRequestDiscount && (
+            <Tooltip text="Pošalji zahtev za popust">
+              <button className="btn btn-secondary flex gap-2">
+                <Percent />
+                Popust
+              </button>
+            </Tooltip>
           )}
+          <button className="btn btn-info flex gap-2" disabled={apartment.isReserved}>
+            <Bookmark />
+            {apartment.isReserved ? "Rezervisano" : "Rezerviši"}
+          </button>
           <button className="btn btn-primary flex gap-2" disabled={apartment.isReserved} onClick={() => navigate(`buy`)}>
             <BadgeEuro />
             Kupi
