@@ -26,3 +26,8 @@ export interface ContractToAdd {
   installmentAmount: number;
   installmentCount: number;
 }
+
+export enum PaymentStatusEnum {
+  Unpaid = "Unpaid",
+  Paid = "Paid",
+}

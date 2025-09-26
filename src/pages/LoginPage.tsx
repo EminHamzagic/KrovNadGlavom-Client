@@ -43,7 +43,10 @@ export default function LoginPage() {
         setLoginData(data.accessToken ?? "", data.refreshToken ?? "", data);
 
         showToast(PopupType.Success, "Uspešno ste se prijavili");
-        navigate("/dashboard");
+        if (data.role === "User")
+          navigate("/apartments");
+        else if (data.role === "Manager")
+          navigate("/buildings");
       }
       catch (err) {
         handleError(err);
@@ -62,7 +65,10 @@ export default function LoginPage() {
       setLoginData(data.accessToken ?? "", data.refreshToken ?? "", data);
 
       showToast(PopupType.Success, "Uspešno ste se prijavili");
-      navigate("/dashboard");
+      if (data.role === "User")
+        navigate("/apartments");
+      else if (data.role === "Manager")
+        navigate("/buildings");
     }
     catch (err) {
       handleError(err);
