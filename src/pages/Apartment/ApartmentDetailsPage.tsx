@@ -143,7 +143,7 @@ export default function ApartmentDetailsPage() {
               {apartment.area * (apartment.building.priceList?.pricePerM2 ?? 1)}
               €
             </span>
-            {apartment.discountRequest && (
+            {apartment.discountRequest && apartment.discountRequest?.status === StatusEnum.Approved && (
               <span className="text-red-800">
                 {getDiscountPrice()}
                 €
