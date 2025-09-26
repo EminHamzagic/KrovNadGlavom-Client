@@ -29,7 +29,7 @@ export function handleError(err: unknown) {
   if (axios.isAxiosError(err)) {
     const responseData = err.response?.data;
 
-    if (typeof responseData === "string") {
+    if (typeof responseData === "string" && responseData !== "") {
       showToast(PopupType.Danger, responseData);
       if (responseData.includes("Refresh token not found") || responseData.includes("already invalidated")) {
         window.location.href = "/login";

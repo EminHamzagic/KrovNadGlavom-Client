@@ -138,7 +138,7 @@ export default function DiscountRequestCard({ request, setReload }: Props) {
         {getUserType() === "Company" && (
           <div className="text-gray-500 flex gap-2 mt-2">
             <span>Agencija:</span>
-            <Link to="" className="text-primary hover:underline">{request.agency.name}</Link>
+            <Link to={`/agency/${request.agencyId}`} className="text-primary hover:underline">{request.agency.name}</Link>
           </div>
         )}
         {getUserType() === "Agency" && (
@@ -150,7 +150,7 @@ export default function DiscountRequestCard({ request, setReload }: Props) {
         {getUserType() === "User" && (
           <div className="text-gray-500 flex gap-2 mt-2">
             <span>Agencija:</span>
-            <Link to="" className="text-primary hover:underline">{request.agency.name}</Link>
+            <Link to={`/agency/${request.agencyId}`} className="text-primary hover:underline">{request.agency.name}</Link>
           </div>
         )}
         <div className="text-gray-500 flex gap-2 mt-2">

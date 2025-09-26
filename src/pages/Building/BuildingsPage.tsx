@@ -51,39 +51,41 @@ export default function BuildingsPage() {
           </div>
         </RequireRole>
         {
-          buildings.map((item, index) => (
-            <div key={index} className="p-6 bg-white border border-gray-200 rounded-lg shadow-sm grid grid-cols-3 gap-2">
-              <div className="col-span-1 flex flex-start items-center"><BuildingIcon size={140} strokeWidth={1} color="#c7671e" /></div>
-              <div className="col-span-2 flex flex-col">
-                <div className="mb-2">
-                  <span className={`${item.isCompleted ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"} text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm`}>{item.isCompleted ? "Završena" : "U izgradnji"}</span>
-                </div>
-                <div className="text-gray-500 flex flex-col mb-2">
-                  <span>Broj parcele:</span>
-                  {item.parcelNumber}
-                </div>
-                {item.company && (
-                  <div className="text-gray-500 flex flex-col mb-2">
-                    <span>Kompanija:</span>
-                    {item.company.name}
+          buildings.length
+            ? buildings.map((item, index) => (
+                <div key={index} className="p-6 bg-white border border-gray-200 rounded-lg shadow-sm grid grid-cols-3 gap-2">
+                  <div className="col-span-1 flex flex-start items-center"><BuildingIcon size={140} strokeWidth={1} color="#c7671e" /></div>
+                  <div className="col-span-2 flex flex-col">
+                    <div className="mb-2">
+                      <span className={`${item.isCompleted ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800"} text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm`}>{item.isCompleted ? "Završena" : "U izgradnji"}</span>
+                    </div>
+                    <div className="text-gray-500 flex flex-col mb-2">
+                      <span>Broj parcele:</span>
+                      {item.parcelNumber}
+                    </div>
+                    {item.company && (
+                      <div className="text-gray-500 flex flex-col mb-2">
+                        <span>Kompanija:</span>
+                        {item.company.name}
+                      </div>
+                    )}
+                    <div className="text-gray-500 flex flex-col mb-2">
+                      <span>Adresa:</span>
+                      <span>
+                        {item.city}
+                        ,
+                        {" "}
+                        {item.address}
+                      </span>
+                    </div>
                   </div>
-                )}
-                <div className="text-gray-500 flex flex-col mb-2">
-                  <span>Adresa:</span>
-                  <span>
-                    {item.city}
-                    ,
-                    {" "}
-                    {item.address}
-                  </span>
+                  <div className="col-span-3">
+                    <button className="btn btn-primary w-full" onClick={() => navigate(`/buildings/${item.id}`)}>Detalji</button>
+                  </div>
                 </div>
-              </div>
-              <div className="col-span-3">
-                <button className="btn btn-primary w-full" onClick={() => navigate(`/buildings/${item.id}`)}>Detalji</button>
-              </div>
-            </div>
-          ),
-          )
+              ),
+              )
+            : <span className="text-2xl">Nema zgrada</span>
         }
       </div>
     </div>

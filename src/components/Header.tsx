@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router";
 import logo from "/KrovNadGlavomLogo.png";
-import { Bed, Building, Building2, FileUser, LayoutDashboard, LogOut, MessageSquarePlus, Percent, X } from "lucide-react";
+import { Bed, Bookmark, Building, Building2, FileUser, LayoutDashboard, LogOut, MessageSquarePlus, Percent, X } from "lucide-react";
 import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
 import { RequireRole } from "./Auth/RequireRole";
@@ -87,6 +87,18 @@ export default function Header({
               >
                 <Bed />
                 <span className="ml-2">Stanovi</span>
+              </button>
+              <button
+                onClick={() => {
+                  navigate("/agency");
+                  setSidebarOpen(false);
+                }}
+                className={`${baseClasses} ${
+                  isActive("/agency") ? "bg-gray-200" : "hover:bg-gray-200"
+                }`}
+              >
+                <Building2 />
+                <span className="ml-2">Agencije</span>
               </button>
             </RequireRole>
 
@@ -175,6 +187,21 @@ export default function Header({
               >
                 <FileUser />
                 <span className="ml-2">Ugovori</span>
+              </button>
+            </RequireRole>
+
+            <RequireRole roles={["User"]}>
+              <button
+                onClick={() => {
+                  navigate("/reservations");
+                  setSidebarOpen(false);
+                }}
+                className={`${baseClasses} ${
+                  isActive("/reservations") ? "bg-gray-200" : "hover:bg-gray-200"
+                }`}
+              >
+                <Bookmark />
+                <span className="ml-2">Rezervacije</span>
               </button>
             </RequireRole>
           </div>

@@ -2,6 +2,7 @@ import type { OrientationEnum } from "../utils/orientation";
 import type { Agency } from "./agency";
 import type { Building } from "./building";
 import type { DiscountRequest } from "./discountRequest";
+import type { Reservation } from "./reservation";
 
 export interface Apartment {
   id: string;
@@ -14,8 +15,8 @@ export interface Apartment {
   floor: number;
   isAvailable: boolean;
   isDeleted?: boolean;
-  isReserved?: boolean;
   canRequestDiscount: boolean;
+  reservation?: Reservation;
   building: Building;
   agency?: Agency;
   discountRequest?: DiscountRequest;

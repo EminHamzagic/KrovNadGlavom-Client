@@ -1,3 +1,5 @@
+import type { UserAgencyFollow } from "./user";
+
 export interface Agency {
   id: string;
   name: string;
@@ -9,6 +11,7 @@ export interface Agency {
   description: string;
   bankAccountNumber: string;
   logoUrl: string;
+  follow?: UserAgencyFollow;
   numberOfBuildings?: number;
   numberOfApartments?: number;
 }

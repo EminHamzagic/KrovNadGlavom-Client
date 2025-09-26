@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
 import type { Company, CompanyToUpdate, LogoUpload } from "../../types/company";
 import { getCompany, updateCompany, uploadCompanyLogo } from "../../services/companyService";
@@ -7,6 +7,7 @@ import FullScreenLoader from "../../components/FullScreenLoader";
 import { PenLine } from "lucide-react";
 import Modal from "../../components/Modal";
 import { PopupType, useToast } from "../../hooks/useToast";
+import { UserContext } from "../../context/UserContext";
 
 export default function CompanyPage() {
   const { companyId } = useParams<{ companyId: string }>();
@@ -22,6 +23,8 @@ export default function CompanyPage() {
 
   const { showToast } = useToast();
 
+  const { user } = useContext(UserContext);
+
   useEffect(() => {
     const fetchCompany = async () => {
       if (companyId) {
@@ -29,6 +32,7 @@ export default function CompanyPage() {
           setLoading(true);
           const data = await getCompany(companyId);
           // console.log("Company data received:", data);
+          setLogoPreview(data.logoUrl);
           setCompany(data);
           setEditForm({
             name: data.name,
@@ -114,14 +118,16 @@ export default function CompanyPage() {
       <div className="planel shadow-md flex-col flex justify-center bg-white rounded-md p-4 mb-10">
         <div className="flex justify-between items-center mb-10">
           <h1 className="text-3xl">Profil kompanije</h1>
-          <div className="flex gap-2">
-            <button
-              className="btn btn-primary px-3"
-              onClick={() => setIsEditOpen(true)}
-            >
-              <PenLine size={18} />
-            </button>
-          </div>
+          {user.constructionCompanyId === companyId && (
+            <div className="flex gap-2">
+              <button
+                className="btn btn-primary px-3"
+                onClick={() => setIsEditOpen(true)}
+              >
+                <PenLine size={18} />
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

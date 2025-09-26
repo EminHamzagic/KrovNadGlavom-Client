@@ -43,6 +43,12 @@ export default function ApartmentBuyPage() {
         try {
           setLoading(true);
           const data = await getApartmentById(apartmentId);
+
+          if (data.reservation) {
+            if (data.reservation.userId !== user.id)
+              navigate("/apartments");
+          }
+
           setApartment(data);
           setPrice(getDiscountPrice(data));
         }

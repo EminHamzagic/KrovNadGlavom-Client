@@ -55,7 +55,7 @@ export default function ContractDetailsPage() {
           </div>
           <div className="col-span-1 flex flex-col mb-3">
             <span className="font-bold">Agencija:</span>
-            <Link to="" className="text-primary hover:underline">{contract.agency.name}</Link>
+            <Link to={`/agency/${contract.agencyId}`} className="text-primary hover:underline">{contract.agency.name}</Link>
           </div>
 
           <div className="col-span-1 flex flex-col mb-3">
