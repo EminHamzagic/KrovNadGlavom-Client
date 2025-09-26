@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router";
 import logo from "/KrovNadGlavomLogo.png";
-import { Bed, Bookmark, Building, Building2, FileUser, LayoutDashboard, LogOut, MessageSquarePlus, Percent, X } from "lucide-react";
+import { Bed, Bookmark, Building, Building2, FileUser, LogOut, MessageSquarePlus, Percent, X } from "lucide-react";
 import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
 import { RequireRole } from "./Auth/RequireRole";
@@ -61,20 +61,6 @@ export default function Header({
         />
         <div className="flex flex-col justify-between h-full">
           <div>
-
-            <button
-              onClick={() => {
-                navigate("/dashboard");
-                setSidebarOpen(false);
-              }}
-              className={`${baseClasses} ${
-                isActive("/dashboard") ? "bg-gray-200" : "hover:bg-gray-200"
-              }`}
-            >
-              <LayoutDashboard />
-              <span className="ml-2">Kontrolna tabla</span>
-            </button>
-
             <RequireRole roles={["User"]}>
               <button
                 onClick={() => {

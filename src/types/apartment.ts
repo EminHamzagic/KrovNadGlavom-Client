@@ -1,6 +1,7 @@
 import type { OrientationEnum } from "../utils/orientation";
 import type { Agency } from "./agency";
 import type { Building } from "./building";
+import type { PaymentStatusEnum } from "./contract";
 import type { DiscountRequest } from "./discountRequest";
 import type { Reservation } from "./reservation";
 
@@ -50,6 +51,7 @@ export interface QueryParameters {
   roomCount?: number;
   balconyCount?: number;
   floor?: number;
+  status?: PaymentStatusEnum;
   orientation?: string;
 }
 

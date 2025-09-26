@@ -1,6 +1,5 @@
 import { Navigate, Route, Routes } from "react-router";
 import LoginPage from "./pages/LoginPage";
-import HomePage from "./pages/HomePage";
 import UserContextProvider from "./context/UserContext";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { GOOGLE_CLIENT_ID } from "./config";
@@ -36,8 +35,7 @@ function App() {
 
           <Route element={<ProtectedRoute />}>
             <Route element={<LayoutComponent />}>
-              <Route path="/" element={<Navigate to="/dashboard" replace />} />
-              <Route path="/dashboard" element={<HomePage />} />
+              <Route path="/" element={<Navigate to="/login" replace />} />
 
               {/* Zgrada rute */}
               <Route path="/buildings" element={<BuildingsPage />} />
