@@ -36,6 +36,12 @@ export interface UserToAdd {
   agencyId?: string;
 }
 
+export interface UserAgencyFollow {
+  id: string;
+  userId: string;
+  agencyId: string;
+}
+
 export interface UserAgencyFollowToAdd {
   userId: string;
   agencyId: string;

@@ -1,13 +1,16 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
 import type { Agency, AgencyToAdd } from "../../types/agency";
 import { getAgency, updateAgency, uploadAgencyLogo } from "../../services/agencyService";
 import { handleError } from "../../utils/handleError";
 import FullScreenLoader from "../../components/FullScreenLoader";
-import { PenLine } from "lucide-react";
+import { Check, HeartPlus, PenLine } from "lucide-react";
 import Modal from "../../components/Modal";
 import { PopupType, useToast } from "../../hooks/useToast";
 import type { LogoUpload } from "../../types/company";
+import { UserContext } from "../../context/UserContext";
+import { deleteSubscription, subscribeToAgency } from "../../services/userAgencyFollowService";
+import type { UserAgencyFollowToAdd } from "../../types/user";
 
 export default function AgencyPage() {
   const { agencyId } = useParams<{ agencyId: string }>();
@@ -22,6 +25,8 @@ export default function AgencyPage() {
   const [logoData, setLogoData] = useState<LogoUpload | null>(null);
 
   const { showToast } = useToast();
+
+  const { user, getUserType } = useContext(UserContext);
 
   useEffect(() => {
     const fetchAgency = async () => {
@@ -107,6 +112,42 @@ export default function AgencyPage() {
     setEditForm(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleSubscribe = async () => {
+    if (agencyId) {
+      try {
+        setLoading(true);
+        await subscribeToAgency({ userId: user.id, agencyId } as UserAgencyFollowToAdd);
+
+        showToast(PopupType.Success, "Uspešno ste zapratili agenciju");
+        setReload(!reload);
+      }
+      catch (err) {
+        handleError(err);
+      }
+      finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  const handleUnsubscribe = async () => {
+    if (agency.follow) {
+      try {
+        setLoading(true);
+        await deleteSubscription(agency.follow.id);
+
+        showToast(PopupType.Success, "Uspešno ste odpratili agenciju");
+        setReload(!reload);
+      }
+      catch (err) {
+        handleError(err);
+      }
+      finally {
+        setLoading(false);
+      }
+    }
+  };
+
   if (loading) {
     return <FullScreenLoader />;
   }
@@ -116,14 +157,39 @@ export default function AgencyPage() {
       <div className="planel shadow-md flex-col flex justify-center bg-white rounded-md p-4 mb-10">
         <div className="flex justify-between items-center mb-10">
           <h1 className="text-3xl">Profil agencije</h1>
-          <div className="flex gap-2">
-            <button
-              className="btn btn-primary px-3"
-              onClick={() => setIsEditOpen(true)}
-            >
-              <PenLine size={18} />
-            </button>
-          </div>
+          {user.agencyId === agencyId && (
+            <div className="flex gap-2">
+              <button
+                className="btn btn-primary px-3"
+                onClick={() => setIsEditOpen(true)}
+              >
+                <PenLine size={18} />
+              </button>
+            </div>
+          )}
+          {getUserType() === "User" && (
+            <div className="flex">
+              {agency.follow
+                ? (
+                    <button
+                      className="btn btn-primary flex gap-2"
+                      onClick={handleUnsubscribe}
+                    >
+                      <Check size={18} />
+                      Odprati
+                    </button>
+                  )
+                : (
+                    <button
+                      className="btn btn-primary flex gap-2"
+                      onClick={handleSubscribe}
+                    >
+                      <HeartPlus size={18} />
+                      Zaprati
+                    </button>
+                  )}
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -22,6 +22,8 @@ import ApartmentsPage from "./pages/Apartment/ApartmentsPage";
 import ApartmentDetailsPage from "./pages/Apartment/ApartmentDetailsPage";
 import ApartmentBuyPage from "./pages/Apartment/ApartmentBuyPage";
 import ContractDetailsPage from "./pages/Contract/ContractDetailsPage";
+import AllAgenciesPage from "./pages/Agency/AllAgenciesPage";
+import ReservationsPage from "./pages/ReservationsPage";
 
 function App() {
   return (
@@ -56,9 +58,7 @@ function App() {
               {/* Kompanija rute */}
               <Route
                 path="/company/:companyId"
-                element={
-                  <RequireRoleRoute roles={["Company"]} element={<CompanyPage />} />
-                }
+                element={<CompanyPage />}
               />
 
               {/* Zahtevi rute */}
@@ -74,10 +74,14 @@ function App() {
 
               {/* Agencija rute */}
               <Route
-                path="/agency/:agencyId"
+                path="/agency"
                 element={
-                  <RequireRoleRoute roles={["Agency"]} element={<AgencyPage />} />
+                  <RequireRoleRoute roles={["User"]} element={<AllAgenciesPage />} />
                 }
+              />
+              <Route
+                path="/agency/:agencyId"
+                element={<AgencyPage />}
               />
 
               {/* Ugovori rute */}
@@ -91,6 +95,14 @@ function App() {
                 path="/contracts/:contractId"
                 element={
                   <RequireRoleRoute roles={["Agency", "User"]} element={<ContractDetailsPage />} />
+                }
+              />
+
+              {/* Rezervacije rute */}
+              <Route
+                path="/reservations"
+                element={
+                  <RequireRoleRoute roles={["User"]} element={<ReservationsPage />} />
                 }
               />
 

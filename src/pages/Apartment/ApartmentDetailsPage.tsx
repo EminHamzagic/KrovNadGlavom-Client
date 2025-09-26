@@ -1,15 +1,17 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import type { Apartment } from "../../types/apartment";
 import { getApartmentById } from "../../services/apartmentService";
 import { handleError } from "../../utils/handleError";
 import FullScreenLoader from "../../components/FullScreenLoader";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
-import { BadgeEuro, Bookmark, Percent } from "lucide-react";
+import { BadgeEuro, Percent } from "lucide-react";
 import Tooltip from "../../components/Tooltip";
 import CreateDiscountRequestModal from "../../components/DiscountRequest/CreateDiscountRequestModal";
 import { StatusEnum } from "../../types/agencyRequest";
 import { RequireRole } from "../../components/Auth/RequireRole";
+import ReserveButton from "../../components/Reservation/ReserveButton";
+import { UserContext } from "../../context/UserContext";
 
 export default function ApartmentDetailsPage() {
   const { apartmentId } = useParams<{ apartmentId: string }>();
@@ -18,6 +20,9 @@ export default function ApartmentDetailsPage() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [reload, setReload] = useState<boolean>(false);
   const [apartment, setApartment] = useState<Apartment>({} as Apartment);
+  const [canBuy, setCanBuy] = useState<boolean>(false);
+
+  const { user } = useContext(UserContext);
 
   const navigate = useNavigate();
 
@@ -28,6 +33,12 @@ export default function ApartmentDetailsPage() {
           setLoading(true);
           const data = await getApartmentById(apartmentId);
           setApartment(data);
+          if (data.reservation === null) {
+            setCanBuy(true);
+          }
+          else {
+            setCanBuy(data.reservation?.userId === user.id);
+          }
         }
         catch (err) {
           handleError(err);
@@ -53,11 +64,11 @@ export default function ApartmentDetailsPage() {
 
   return (
     <div className="planel shadow-md flex-col flex justify-center bg-white rounded-md p-4 mb-10">
-      <div className="flex justify-between items-center mb-10">
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-10">
         <h1 className="text-3xl">Detalji stana</h1>
         <RequireRole roles={["User"]}>
 
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap justify-center">
             {apartment.canRequestDiscount && (
               <Tooltip text={apartment.discountRequest !== null ? "Već ste poslali zahtev za popust" : "Pošalji zahtev za popust"}>
                 <button
@@ -72,11 +83,8 @@ export default function ApartmentDetailsPage() {
                 </button>
               </Tooltip>
             )}
-            <button className="btn btn-info flex gap-2" disabled={apartment.isReserved}>
-              <Bookmark />
-              {apartment.isReserved ? "Rezervisano" : "Rezerviši"}
-            </button>
-            <button className="btn btn-primary flex gap-2" disabled={apartment.isReserved} onClick={() => navigate(`buy`)}>
+            <ReserveButton apartment={apartment} setReload={setReload} />
+            <button className="btn btn-primary flex gap-2" disabled={!canBuy} onClick={() => navigate(`buy`)}>
               <BadgeEuro />
               Kupi
             </button>
@@ -124,7 +132,7 @@ export default function ApartmentDetailsPage() {
           </div>
           <div className="col-span-1 flex flex-col mb-3">
             <span className="font-bold">Agencija:</span>
-            <Link to="" className="text-primary hover:underline">{apartment.agency?.name}</Link>
+            <Link to={`/agency/${apartment.agency?.id}`} className="text-primary hover:underline">{apartment.agency?.name}</Link>
           </div>
 
           <div className="col-span-1 flex flex-col mb-3">
@@ -170,6 +178,7 @@ export default function ApartmentDetailsPage() {
         </div>
       </div>
 
+      {!apartment.canRequestDiscount && <span className="text-sm italic mt-5">*Zaprati agenciju da bi mogao da pošalješ zahtev za popust!</span>}
       <CreateDiscountRequestModal apartment={apartment} isOpen={isOpen} setIsOpen={setIsOpen} setReload={setReload} />
     </div>
   );
