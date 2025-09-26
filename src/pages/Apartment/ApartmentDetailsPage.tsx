@@ -84,10 +84,12 @@ export default function ApartmentDetailsPage() {
               </Tooltip>
             )}
             <ReserveButton apartment={apartment} setReload={setReload} />
-            <button className="btn btn-primary flex gap-2" disabled={!canBuy} onClick={() => navigate(`buy`)}>
-              <BadgeEuro />
-              Kupi
-            </button>
+            {apartment.isAvailable && (
+              <button className="btn btn-primary flex gap-2" disabled={!canBuy} onClick={() => navigate(`buy`)}>
+                <BadgeEuro />
+                Kupi
+              </button>
+            )}
           </div>
         </RequireRole>
       </div>

@@ -44,6 +44,9 @@ export default function ApartmentBuyPage() {
           setLoading(true);
           const data = await getApartmentById(apartmentId);
 
+          if (!data.isAvailable)
+            navigate("/apartments");
+
           if (data.reservation) {
             if (data.reservation.userId !== user.id)
               navigate("/apartments");

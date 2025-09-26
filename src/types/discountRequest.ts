@@ -13,6 +13,8 @@ export interface DiscountRequest {
   percentage: number;
   status: string;
   reason?: string;
+  rejectReason?: string;
+  mustForward: boolean;
   user: User;
   agency: Agency;
   apartment: Apartment;
@@ -25,9 +27,11 @@ export interface DiscountRequestToAdd {
   apartmentId?: string;
   constructionCompanyId?: string;
   percentage: number;
+  reason: string;
 }
 
 export interface DiscountRequestToUpdate {
   status: StatusEnum;
   reason?: string;
+  rejectReason?: string;
 }

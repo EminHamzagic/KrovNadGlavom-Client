@@ -42,6 +42,13 @@ export async function updateDiscountRequest(
   return data;
 }
 
+export async function forwardDiscountRequest(
+  requestId: string,
+): Promise<string> {
+  const { data } = await apiClient.put<string>(`${API_URL}/DiscountRequests/${requestId}/forward`);
+  return data;
+}
+
 export async function deleteDiscountRequest(
   requestId: string,
 ): Promise<boolean> {

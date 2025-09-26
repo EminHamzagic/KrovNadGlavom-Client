@@ -6,7 +6,7 @@ import Modal from "../Modal";
 import { CircleQuestionMark, MoreVertical, Trash } from "lucide-react";
 import { Link } from "react-router";
 import { handleError } from "../../utils/handleError";
-import { deleteDiscountRequest, updateDiscountRequest } from "../../services/discountRequestService";
+import { deleteDiscountRequest, forwardDiscountRequest, updateDiscountRequest } from "../../services/discountRequestService";
 import { PopupType, useToast } from "../../hooks/useToast";
 import { UserContext } from "../../context/UserContext";
 import Tooltip from "../Tooltip";
@@ -38,11 +38,13 @@ export default function DiscountRequestCard({ request, setReload }: Props) {
   const [isOpenReject, setIsOpenReject] = useState<boolean>(false);
   const [isOpenAccept, setIsOpenAccept] = useState<boolean>(false);
   const [isOpenMenu, setIsOpenMenu] = useState<boolean>(false);
+  const [isOpenForward, setIsOpenForward] = useState<boolean>(false);
   const [isOpenDelete, setIsOpenDelete] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [updateData, setUpdateData] = useState<DiscountRequestToUpdate>({
     status: StatusEnum.Pending,
-    reason: "",
+    rejectReason: "",
+    reason: request.reason,
   });
 
   const { showToast } = useToast();
@@ -52,6 +54,7 @@ export default function DiscountRequestCard({ request, setReload }: Props) {
   const handleReject = async () => {
     const sendData = {
       ...updateData,
+      reason: request.reason,
       status: StatusEnum.Rejected,
     } as DiscountRequestToUpdate;
 
@@ -86,7 +89,8 @@ export default function DiscountRequestCard({ request, setReload }: Props) {
 
   const handleAccept = async () => {
     const sendData = {
-      reason: "",
+      rejectReason: "",
+      reason: request.reason,
       status: StatusEnum.Approved,
     } as DiscountRequestToUpdate;
 
@@ -94,6 +98,21 @@ export default function DiscountRequestCard({ request, setReload }: Props) {
       setLoading(true);
       await updateDiscountRequest(request.id, sendData);
       showToast(PopupType.Success, "Uspšno ste prihvatili zahtev");
+      setReload(prev => !prev);
+    }
+    catch (err) {
+      handleError(err);
+    }
+    finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFowrad = async () => {
+    try {
+      setLoading(true);
+      await forwardDiscountRequest(request.id);
+      showToast(PopupType.Success, "Uspšno ste prosledili zahtev");
       setReload(prev => !prev);
     }
     catch (err) {
@@ -141,7 +160,7 @@ export default function DiscountRequestCard({ request, setReload }: Props) {
             <Link to={`/agency/${request.agencyId}`} className="text-primary hover:underline">{request.agency.name}</Link>
           </div>
         )}
-        {getUserType() === "Agency" && (
+        {(getUserType() === "Agency" || getUserType() === "Company") && (
           <div className="text-gray-500 flex gap-2 mt-2">
             <span>Korisnik:</span>
             <span>{`${request.user.name} ${request.user.lastname}`}</span>
@@ -166,36 +185,51 @@ export default function DiscountRequestCard({ request, setReload }: Props) {
         </div>
         {request.reason && (
           <div className="text-gray-500 flex gap-2 mt-2">
-            <span>Razlog odbijanja:</span>
+            <span>Razlog za popust:</span>
             <Tooltip position="top" text={request.reason}>
               <div className="cursor-pointer">
                 <CircleQuestionMark size={20} />
               </div>
             </Tooltip>
-
+          </div>
+        )}
+        {request.rejectReason && (
+          <div className="text-gray-500 flex gap-2 mt-2">
+            <span>Razlog odbijanja:</span>
+            <Tooltip position="top" text={request.rejectReason}>
+              <div className="cursor-pointer">
+                <CircleQuestionMark size={20} />
+              </div>
+            </Tooltip>
           </div>
         )}
 
       </div>
       {request.status === StatusEnum.Pending && (getUserType() === "Company" || (getUserType() === "Agency" && !request.constructionCompanyId)) && (
-        <div className="col-span-3 mt-2 flex gap-5 w-full">
+        <div className="col-span-3 mt-2 grid grid-cols-2 gap-5 w-full">
           <button
             className="btn btn-danger w-full"
             onClick={() => {
               setIsOpenReject(true);
-              setUpdateData({ status: StatusEnum.Pending, reason: "" });
+              setUpdateData({ status: StatusEnum.Pending, rejectReason: "" });
             }}
           >
             Odbij
           </button>
-          <button className="btn btn-success w-full" onClick={() => setIsOpenAccept(true)}>Prihvati</button>
+          {request.mustForward && !request.constructionCompanyId
+            ? (
+                <Tooltip text="Zahtev za popust se mora proslediti kompaniji jer je procenat popusta veći od vaše provizije">
+                  <button className="btn btn-primary w-full whitespace-nowrap" onClick={() => setIsOpenForward(true)}>Prosledi</button>
+                </Tooltip>
+              )
+            : <button className="btn btn-success w-full" onClick={() => setIsOpenAccept(true)}>Prihvati</button>}
         </div>
       )}
 
       <Modal isOpen={isOpenReject} onClose={() => setIsOpenReject(false)} title="Odbij zahtev" size="xl" loading={loading} onConfirm={handleReject}>
         <div className="flex flex-col">
           <label>Razlog za odbijanje</label>
-          <textarea className="form-input h-30" value={updateData.reason} onChange={e => setUpdateData({ ...updateData, reason: e.target.value })} placeholder="Unesite razlog za odbijanje"></textarea>
+          <textarea className="form-input h-30" value={updateData.rejectReason} onChange={e => setUpdateData({ ...updateData, rejectReason: e.target.value })} placeholder="Unesite razlog za odbijanje"></textarea>
         </div>
       </Modal>
 
@@ -208,6 +242,13 @@ export default function DiscountRequestCard({ request, setReload }: Props) {
       <Modal isOpen={isOpenDelete} onClose={() => setIsOpenDelete(false)} title="Brisanje zahteva" size="xl" loading={loading} onConfirm={handleDelete}>
         <div>
           <h1>Da li ste sigurni da želite da izbrišete ovaj zahtev?</h1>
+        </div>
+      </Modal>
+
+      <Modal isOpen={isOpenForward} onClose={() => setIsOpenForward(false)} title="Prosleđivanje zahteva" size="xl" confirmText="Prosledi" loading={loading} onConfirm={handleFowrad}>
+        <div>
+          <h1>Da li ste sigurni da želite da prosledite ovaj zahtev kompaniji?</h1>
+          <h1>Nakon prosleđivanja, kompanija preuzima potpunu slobodu o tome hoće li prihvatiti zahtev.</h1>
         </div>
       </Modal>
     </div>
