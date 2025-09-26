@@ -64,7 +64,18 @@ export default function AllAgenciesPage() {
     <>
       <div className="planel flex-col shadow-md flex bg-white rounded-md p-4 mb-4">
         <div className="flex">
-          <input type="text" className="form-input rounded-r-none" placeholder="Pretraži agencije..." value={text} onChange={e => setText(e.target.value)} />
+          <input
+            type="text"
+            className="form-input rounded-r-none"
+            placeholder="Pretraži agencije..."
+            value={text}
+            onChange={e => setText(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleFiltersApply({ ...queryParams, searchText: text });
+              }
+            }}
+          />
           <button
             className="btn btn-primary rounded-l-none"
             onClick={() => {

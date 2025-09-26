@@ -5,6 +5,7 @@ import { handleError } from "../../utils/handleError";
 import { getContractById } from "../../services/contractService";
 import FullScreenLoader from "../../components/FullScreenLoader";
 import InstallmentList from "../../components/Installment/InstallmentList";
+import { ExternalLink } from "lucide-react";
 
 export default function ContractDetailsPage() {
   const { contractId } = useParams<{ contractId: string }>();
@@ -40,8 +41,12 @@ export default function ContractDetailsPage() {
   return (
     <>
       <div className="planel shadow-md flex-col flex justify-center bg-white rounded-md p-4 mb-10">
-        <div className="flex justify-between items-center mb-10">
+        <div className="flex justify-between items-center flex-col sm:flex-row mb-10">
           <h1 className="text-3xl">Detalji ugovora</h1>
+          <a href="https://res.cloudinary.com/dp6gqdlbn/image/upload/v1758890009/Uslovi_kori%C5%A1%C4%87enja_ekeurh.pdf" target="_" className="text-primary underline hover:text-primary-dark-light transition duration-300 flex gap-2 items-center">
+            Uslovi korišćenja
+            <ExternalLink size={18} />
+          </a>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 w-full">
