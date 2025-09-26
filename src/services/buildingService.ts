@@ -1,19 +1,48 @@
 import { API_URL } from "../config";
+import type { PaginatedResult, QueryParameters } from "../types/apartment";
 import type { Building, BuildingEndDateToExtend, BuildingToAdd } from "../types/building";
 import apiClient from "../utils/apiClient";
 
 export async function getCompanyBuildings(
   companyId: string,
-): Promise<Building[]> {
-  const { data } = await apiClient.get<Building[]>(`${API_URL}/Buildings/company/${companyId}`);
-  return data;
+  parameters: QueryParameters,
+): Promise<PaginatedResult<Building>> {
+  const searchParams = new URLSearchParams();
+
+  Object.entries(parameters).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== "" && value !== 0) {
+      searchParams.append(key, String(value));
+    }
+  });
+
+  const queryString = searchParams.toString();
+  const url = `${API_URL}/Buildings/company/${companyId}${queryString ? `?${queryString}` : ""}`;
+
+  const { data, headers } = await apiClient.get<Building[]>(url);
+
+  const pagination = JSON.parse(headers["x-pagination"]);
+  return { data, pagination };
 }
 
 export async function getBuildings(
   agencyId: string,
-): Promise<Building[]> {
-  const { data } = await apiClient.get<Building[]>(`${API_URL}/Buildings/${agencyId}/agency`);
-  return data;
+  parameters: QueryParameters,
+): Promise<PaginatedResult<Building>> {
+  const searchParams = new URLSearchParams();
+
+  Object.entries(parameters).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== "" && value !== 0) {
+      searchParams.append(key, String(value));
+    }
+  });
+
+  const queryString = searchParams.toString();
+  const url = `${API_URL}/Buildings/agency/${agencyId}${queryString ? `?${queryString}` : ""}`;
+
+  const { data, headers } = await apiClient.get<Building[]>(url);
+
+  const pagination = JSON.parse(headers["x-pagination"]);
+  return { data, pagination };
 }
 
 export async function getBuildingById(

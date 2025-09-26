@@ -98,6 +98,10 @@ export default function LoginPage() {
                   onChange={(e) => {
                     setEmail(e.target.value);
                   }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter")
+                      handleLogin();
+                  }}
                 />
               </div>
             </div>
