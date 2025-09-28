@@ -103,36 +103,6 @@ export default function Header({
               </button>
             </RequireRole>
 
-            <RequireRole roles={["Company"]}>
-              <button
-                onClick={() => {
-                  navigate(`/company/${user.constructionCompanyId}`);
-                  setSidebarOpen(false);
-                }}
-                className={`${baseClasses} ${
-                  isActive("/company") ? "bg-gray-200" : "hover:bg-gray-200"
-                }`}
-              >
-                <Building2 />
-                <span className="ml-2">Kompanija</span>
-              </button>
-            </RequireRole>
-
-            <RequireRole roles={["Agency"]}>
-              <button
-                onClick={() => {
-                  navigate(`/agency/${user.agencyId}`);
-                  setSidebarOpen(false);
-                }}
-                className={`${baseClasses} ${
-                  isActive("/agency") ? "bg-gray-200" : "hover:bg-gray-200"
-                }`}
-              >
-                <Building2 />
-                <span className="ml-2">Agencija</span>
-              </button>
-            </RequireRole>
-
             <RequireRole roles={["Company", "Agency"]}>
               <button
                 onClick={() => {
@@ -191,16 +161,48 @@ export default function Header({
               </button>
             </RequireRole>
           </div>
-          <button
-            onClick={() => {
-              logout();
-              navigate("/login");
-            }}
-            className="flex items-center hover:bg-gray-200 p-3 cursor-pointer transition-all duration-200 rounded-md w-full"
-          >
-            <LogOut color="red" />
-            <span className="ml-2 text-red-700">Logout</span>
-          </button>
+
+          <div>
+            <RequireRole roles={["Company"]}>
+              <button
+                onClick={() => {
+                  navigate(`/company/${user.constructionCompanyId}`);
+                  setSidebarOpen(false);
+                }}
+                className={`${baseClasses} ${
+                  isActive("/company") ? "bg-gray-200" : "hover:bg-gray-200"
+                }`}
+              >
+                <Building2 />
+                <span className="ml-2">Kompanija</span>
+              </button>
+            </RequireRole>
+
+            <RequireRole roles={["Agency"]}>
+              <button
+                onClick={() => {
+                  navigate(`/agency/${user.agencyId}`);
+                  setSidebarOpen(false);
+                }}
+                className={`${baseClasses} ${
+                  isActive("/agency") ? "bg-gray-200" : "hover:bg-gray-200"
+                }`}
+              >
+                <Building2 />
+                <span className="ml-2">Agencija</span>
+              </button>
+            </RequireRole>
+            <button
+              onClick={() => {
+                logout();
+                navigate("/login");
+              }}
+              className="flex items-center hover:bg-gray-200 p-3 cursor-pointer transition-all duration-200 rounded-md w-full"
+            >
+              <LogOut color="red" />
+              <span className="ml-2 text-red-700">Logout</span>
+            </button>
+          </div>
         </div>
       </div>
     </>

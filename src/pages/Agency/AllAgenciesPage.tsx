@@ -94,7 +94,7 @@ export default function AllAgenciesPage() {
             ? agencies.map((item, index) => (
                 <div key={index} className="p-6 bg-white border border-gray-200 rounded-lg shadow-sm grid grid-cols-3 gap-2">
                   <div className="col-span-1 flex justify-center items-center">
-                    <img src={item.logoUrl ?? ""} className="h-20 w-20 object-cover rounded-full" />
+                    <img src={item.logoUrl ?? "https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small_2x/default-avatar-icon-of-social-media-user-vector.jpg"} className="h-20 w-20 object-cover rounded-full" />
                   </div>
                   <div className="col-span-2 flex flex-col">
                     <div className="text-gray-500 flex gap-2 mb-2">
