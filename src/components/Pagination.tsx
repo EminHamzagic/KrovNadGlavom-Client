@@ -20,21 +20,17 @@ function Pagination({
     const pages: number[] = [];
 
     if (totalPages <= 3) {
-    // If less than or equal to 3 pages, show all
       for (let i = 1; i <= totalPages; i++) {
         pages.push(i);
       }
     }
     else if (currentPage <= 2) {
-    // Near start → always show 1,2,3
       pages.push(1, 2, 3);
     }
     else if (currentPage >= totalPages - 1) {
-    // Near end → show last 3 pages
       pages.push(totalPages - 2, totalPages - 1, totalPages);
     }
     else {
-    // Middle → currentPage -1, currentPage, currentPage +1
       pages.push(currentPage - 1, currentPage, currentPage + 1);
     }
 
@@ -76,7 +72,7 @@ function Pagination({
             {/* First Page */}
             <button
               onClick={() => onPageChange(1)}
-              disabled={currentPage === 1}
+              disabled={currentPage === 1 || totalCount === 0}
               className="flex items-center justify-center flex-1 sm:w-10 h-10 rounded-full text-gray-600 bg-gray-200 hover:bg-gray-300 disabled:opacity-50 cursor-pointer transition duration-300"
             >
               <ChevronsLeft />
@@ -85,7 +81,7 @@ function Pagination({
             {/* Prev */}
             <button
               onClick={() => onPageChange(currentPage - 1)}
-              disabled={currentPage === 1}
+              disabled={currentPage === 1 || totalCount === 0}
               className="flex items-center justify-center flex-1 sm:w-10 h-10 rounded-full text-gray-600 bg-gray-200 hover:bg-gray-300 disabled:opacity-50 cursor-pointer transition duration-300"
             >
               <ChevronLeft size={18} />
@@ -96,7 +92,6 @@ function Pagination({
               <button
                 key={i}
                 onClick={() => handlePageClick(p)}
-                // disabled={p === "..."}
                 aria-current={p === currentPage ? "page" : undefined}
                 className={clsx(
                   "flex items-center justify-center flex-1 sm:w-10 h-10 rounded-full text-sm font-semibold cursor-pointer transition duration-300",
@@ -112,7 +107,7 @@ function Pagination({
             {/* Next */}
             <button
               onClick={() => onPageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
+              disabled={currentPage === totalPages || totalCount === 0}
               className="flex items-center justify-center flex-1 sm:w-10 h-10 rounded-full text-gray-600 bg-gray-200 hover:bg-gray-300 disabled:opacity-50 cursor-pointer transition duration-300"
             >
               <ChevronRight size={18} />
@@ -121,7 +116,7 @@ function Pagination({
             {/* Last Page */}
             <button
               onClick={() => onPageChange(totalPages)}
-              disabled={currentPage === totalPages}
+              disabled={currentPage === totalPages || totalCount === 0}
               className="flex items-center justify-center flex-1 sm:w-10 h-10 rounded-full text-gray-600 bg-gray-200 hover:bg-gray-300 disabled:opacity-50 cursor-pointer transition duration-300"
             >
               <ChevronsRight />
