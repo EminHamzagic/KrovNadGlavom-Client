@@ -13,7 +13,7 @@ export enum PopupType {
 }
 
 export function useToast() {
-  const showToast = (type: PopupType, text: string) => {
+  const showToast = (type: PopupType, text: string, duration: number = 3000) => {
     MySwal.fire({
       toast: true,
       position: "bottom-end",
@@ -22,7 +22,7 @@ export function useToast() {
       },
       title: text,
       showConfirmButton: false,
-      timer: 3000,
+      timer: duration,
       width: "35rem",
       timerProgressBar: true,
       showCloseButton: true,

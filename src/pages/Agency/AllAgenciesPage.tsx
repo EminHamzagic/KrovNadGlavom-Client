@@ -103,12 +103,14 @@ export default function AllAgenciesPage() {
                     <div className="text-gray-500 flex gap-2 mb-2">
                       <span>
                         Broj stanova:
+                        {" "}
                         {item.numberOfApartments}
                       </span>
                     </div>
                     <div className="text-gray-500 flex gap-2 mb-2">
                       <span>
                         Broj zgrada:
+                        {" "}
                         {item.numberOfBuildings}
                       </span>
                     </div>

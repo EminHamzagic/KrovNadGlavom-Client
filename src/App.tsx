@@ -23,6 +23,7 @@ import ApartmentBuyPage from "./pages/Apartment/ApartmentBuyPage";
 import ContractDetailsPage from "./pages/Contract/ContractDetailsPage";
 import AllAgenciesPage from "./pages/Agency/AllAgenciesPage";
 import ReservationsPage from "./pages/ReservationsPage";
+import VerifyEmailPage from "./pages/Auth/VerifyEmailPage";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
           {/* Auth rute */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/verify-email" element={<VerifyEmailPage />} />
 
           <Route element={<ProtectedRoute />}>
             <Route element={<LayoutComponent />}>
