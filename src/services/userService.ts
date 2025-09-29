@@ -43,3 +43,10 @@ export async function uploadUserPfp(
 
   return data;
 }
+
+export async function verifyUserEmail(
+  token: string,
+): Promise<boolean> {
+  const { data } = await apiClient.post<boolean>(`${API_URL}/Users/verify-email`, { token });
+  return data;
+}

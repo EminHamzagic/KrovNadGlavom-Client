@@ -122,7 +122,7 @@ export default function RegisterPage() {
 
         await handleFileUpload(userId);
 
-        showToast(PopupType.Success, "Registracija je bila uspešna. Molimo vas prijavite se");
+        showToast(PopupType.Success, "Registracija je bila uspešna. Poslali smo vam email za verifikaciju profila. Molimo vas verifikuj te profil kako bi ste se prijavili", 10000);
         navigate("/login");
       }
       catch (err) {
