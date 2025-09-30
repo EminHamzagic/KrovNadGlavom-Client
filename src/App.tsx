@@ -24,6 +24,8 @@ import ContractDetailsPage from "./pages/Contract/ContractDetailsPage";
 import AllAgenciesPage from "./pages/Agency/AllAgenciesPage";
 import ReservationsPage from "./pages/ReservationsPage";
 import VerifyEmailPage from "./pages/Auth/VerifyEmailPage";
+import ResetPasswordPage from "./pages/Auth/ResetPasswordPage";
+import RequestPasswordResetPage from "./pages/Auth/RequestPasswordResetPage";
 
 function App() {
   return (
@@ -34,6 +36,8 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/verify-email" element={<VerifyEmailPage />} />
+          <Route path="/request-password-reset" element={<RequestPasswordResetPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
 
           <Route element={<ProtectedRoute />}>
             <Route element={<LayoutComponent />}>

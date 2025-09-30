@@ -50,3 +50,18 @@ export async function verifyUserEmail(
   const { data } = await apiClient.post<boolean>(`${API_URL}/Users/verify-email`, { token });
   return data;
 }
+
+export async function sendPasswordResetRequest(
+  email: string,
+): Promise<boolean> {
+  const { data } = await apiClient.post<boolean>(`${API_URL}/Users/request-password-reset`, { email });
+  return data;
+}
+
+export async function resetUserPassword(
+  newPassword: string,
+  token: string,
+): Promise<boolean> {
+  const { data } = await apiClient.post<boolean>(`${API_URL}/Users/password-reset`, { token, newPassword });
+  return data;
+}
