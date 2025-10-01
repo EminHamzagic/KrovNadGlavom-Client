@@ -13,6 +13,7 @@ import ExtendBuildingEndModal from "../../components/Building/ExtendBuildingEndM
 import { RequireRole } from "../../components/Auth/RequireRole";
 import SendRequestButtonModal from "../../components/AgencyRequest/SendRequestButtonModal";
 import { handleError } from "../../utils/handleError";
+import BuildingGarages from "../../components/Building/BuildingGarages";
 
 export default function BuildingDetailsPage() {
   const { buildingId } = useParams<{ buildingId: string }>();
@@ -22,9 +23,21 @@ export default function BuildingDetailsPage() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isOpenExtend, setIsOpenExtend] = useState<boolean>(false);
   const [reload, setReload] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<number>(1);
 
   const navigate = useNavigate();
   const { showToast } = useToast();
+
+  useEffect(() => {
+    const storedTab = localStorage.getItem("buildingActiveTab");
+    if (storedTab) {
+      setActiveTab(Number(storedTab));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("buildingActiveTab", activeTab.toString());
+  }, [activeTab]);
 
   useEffect(() => {
     const fetchBuilding = async () => {
@@ -160,6 +173,13 @@ export default function BuildingDetailsPage() {
                 €
               </span>
             </div>
+            <div className="col-span-1 flex flex-col mb-3">
+              <span className="font-bold">Cena garažnog mesta:</span>
+              <span>
+                {building.priceList?.garagePrice}
+                €
+              </span>
+            </div>
           </div>
           <div className="col-span-2 sm:col-span-1 flex flex-col">
             <span className="font-bold">Lokacija zgrade:</span>
@@ -190,7 +210,43 @@ export default function BuildingDetailsPage() {
         </div>
       </div>
 
-      <BuildingApartments floorCount={building.floorCount} apartments={building.apartments ?? []} buildingId={building.id} setReload={setReload} />
+      <div className="planel shadow-md flex-col flex justify-center bg-white rounded-md p-4">
+        <div className="text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700 mb-10">
+          <ul className="flex flex-wrap -mb-px">
+            <li className="me-2">
+              <button
+                onClick={() => {
+                  setActiveTab(1);
+                }}
+                className={`inline-block p-4 border-b-2 rounded-t-lg cursor-pointer ${
+                  activeTab === 1
+                    ? "text-primary border-primary"
+                    : "border-transparent hover:text-gray-600 hover:border-gray-300 "
+                }`}
+              >
+                Stanovi
+              </button>
+            </li>
+            <li className="me-2">
+              <button
+                onClick={() => {
+                  setActiveTab(2);
+                }}
+                className={`inline-block p-4 border-b-2 rounded-t-lg cursor-pointer ${
+                  activeTab === 2
+                    ? "text-primary border-primary"
+                    : "border-transparent hover:text-gray-600 hover:border-gray-300 "
+                }`}
+              >
+                Garaže
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        {activeTab === 1 && <BuildingApartments floorCount={building.floorCount} apartments={building.apartments ?? []} buildingId={building.id} setReload={setReload} />}
+        {activeTab === 2 && <BuildingGarages garages={building.garages ?? []} setReload={setReload} apartments={building.apartments ?? []} />}
+      </div>
       <Modal isOpen={isOpen} onClose={() => setIsOpen(false)} title="Brisanje zgrade" onConfirm={handleDelete} loading={loadingModal}>
         <div>
           <p>Da li ste sigurni da želite da izbrišete ovu zgradu?</p>

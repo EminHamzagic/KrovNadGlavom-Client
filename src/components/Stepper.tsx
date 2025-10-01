@@ -10,11 +10,6 @@ interface StepperProps {
   stepArray: StepObj[];
 }
 
-// const steps = [
-//   { id: 1, label: "File Upload" },
-//   { id: 2, label: "Finish" },
-// ];
-
 export default function Stepper({ step, stepArray }: StepperProps) {
   return (
     <div className="flex items-center justify-center w-full mb-8">
@@ -28,8 +23,8 @@ export default function Stepper({ step, stepArray }: StepperProps) {
             <motion.div
               initial={false}
               animate={{
-                backgroundColor: isActive || isCompleted ? "#c7671e" : "#e5e7eb", // primary-600 or gray-200
-                color: isActive || isCompleted ? "#fff" : "#6b7280", // white or gray-500
+                backgroundColor: isActive || isCompleted ? "#c7671e" : "#e5e7eb",
+                color: isActive || isCompleted ? "#fff" : "#6b7280",
               }}
               className="flex items-center justify-center w-8 h-8 rounded-full text-sm font-medium transition-colors duration-300"
             >
@@ -39,10 +34,10 @@ export default function Stepper({ step, stepArray }: StepperProps) {
             {/* Step Label */}
             <motion.span
               animate={{
-                color: isActive ? "#c7671e" : "#6b7280", // primary-600 or gray-500
+                color: isActive ? "#c7671e" : "#6b7280",
                 fontWeight: isActive ? 600 : 400,
               }}
-              className="ml-2 text-sm transition-colors duration-300"
+              className="ml-2 text-sm transition-colors duration-300 hidden sm:flex"
             >
               {s.label}
             </motion.span>

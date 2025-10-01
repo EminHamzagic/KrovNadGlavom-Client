@@ -50,7 +50,7 @@ export default function BuildingApartments({ apartments, floorCount, buildingId,
 
   return (
     <>
-      <div className="planel shadow-md flex-col flex justify-center bg-white rounded-md p-4">
+      <>
         <div className="flex justify-between items-center mb-5">
           <h1 className="text-3xl">Stanovi</h1>
           <RequireRole roles={["Company"]}>
@@ -156,7 +156,7 @@ export default function BuildingApartments({ apartments, floorCount, buildingId,
               </div>
             )
           : <span>Zgrada ne sadrži stanove</span>}
-      </div>
+      </>
 
       <Modal
         isOpen={isOpen}
