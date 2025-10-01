@@ -12,6 +12,8 @@ import type { ApartmentToAdd } from "../../types/apartment";
 import LocationMarker from "../../components/LocationMarker";
 import Stepper from "../../components/Stepper";
 import { handleError } from "../../utils/handleError";
+import SetBuildingGarages from "../../components/Garage/SetBuildingGarages";
+import type { GarageToAdd } from "../../types/garage";
 
 interface Props {
   building?: Building;
@@ -38,9 +40,11 @@ export default function CreateBuildingPage({ building }: Props) {
     priceList: {
       pricePerM2: building?.priceList?.pricePerM2 ?? 0,
       penaltyPerM2: building?.priceList?.penaltyPerM2 ?? 0,
+      garagePrice: building?.priceList?.garagePrice ?? 0,
     },
   });
   const [apartments, setApartments] = useState<ApartmentToAdd[]>([]);
+  const [garages, setGarages] = useState<GarageToAdd[]>([]);
   const [startDate, setStartDate] = useState<Date>(building?.startDate ? new Date(building.startDate) : new Date());
   const [endDate, setEndDate] = useState<Date>(building?.endDate ? new Date(building.endDate) : new Date());
   const [loading, setLoading] = useState<boolean>(false);
@@ -53,6 +57,7 @@ export default function CreateBuildingPage({ building }: Props) {
   const steps = [
     { id: 1, label: "Informacije" },
     { id: 2, label: "Stanovi" },
+    { id: 3, label: "Garaže" },
   ];
 
   const handleChange = (key: keyof BuildingToAdd, value: any) => {
@@ -108,6 +113,8 @@ export default function CreateBuildingPage({ building }: Props) {
       newErrors.pricePerM2 = "Cena po m² je obavezna";
     if (!data.priceList.penaltyPerM2 || data.priceList.penaltyPerM2 <= 0)
       newErrors.penaltyPerM2 = "Kazna po m² je obavezna";
+    if (!data.priceList.garagePrice || data.priceList.garagePrice <= 0)
+      newErrors.garagePrice = "Cena garažnog mesta je obavezna";
 
     return newErrors;
   };
@@ -127,7 +134,7 @@ export default function CreateBuildingPage({ building }: Props) {
     }
 
     setErrors({});
-    setStep(2);
+    setStep(step + 1);
   };
 
   const handleBuildingCreate = async () => {
@@ -141,6 +148,7 @@ export default function CreateBuildingPage({ building }: Props) {
     const sendData = {
       ...buildingData,
       apartments,
+      garages,
       startDate: startDate.toISOString(),
       endDate: endDate.toISOString(),
     } as BuildingToAdd;
@@ -330,34 +338,56 @@ export default function CreateBuildingPage({ building }: Props) {
             </div>
 
             {!building && (
-              <>
-                <div className={`col-span-1 sm:col-span-2 ${errors.pricePerM2 && "has-error"}`}>
+              <div className="col-span-full grid grid-cols-1 sm:grid-cols-3 gap-5">
+                <div className={`col-span-1 ${errors.pricePerM2 && "has-error"}`}>
                   <label className="form-label">Cena po kvadratu (€):</label>
-                  <input
-                    type="text"
-                    className="form-input"
-                    placeholder="Unesite cenu stanova po kvadratu"
-                    value={buildingData.priceList.pricePerM2}
-                    onChange={e => handlePriceListChange("pricePerM2", Number.parseFloat(e.target.value) || 0)}
-                  />
+                  <div className="flex">
+                    <input
+                      type="text"
+                      className="form-input rounded-r-none"
+                      placeholder="Unesite cenu stanova po kvadratu"
+                      value={buildingData.priceList.pricePerM2}
+                      onChange={e => handlePriceListChange("pricePerM2", Number.parseFloat(e.target.value) || 0)}
+                    />
+                    <div className="flex items-center justify-center border border-[#e0e6ed] bg-[#eee] px-3 font-semibold rounded-r-md">€</div>
+                  </div>
                   {errors.pricePerM2 && (
                     <p className="text-danger text-sm mt-1">{errors.pricePerM2}</p>
                   )}
                 </div>
-                <div className={`col-span-1 sm:col-span-2 ${errors.penaltyPerM2 && "has-error"}`}>
+                <div className={`col-span-1 ${errors.penaltyPerM2 && "has-error"}`}>
                   <label className="form-label">Cena penala za kašnjenje po kvadratu (€):</label>
-                  <input
-                    type="text"
-                    className="form-input"
-                    placeholder="Unesite cena penala za kašnjenje po kvadratu stana"
-                    value={buildingData.priceList.penaltyPerM2}
-                    onChange={e => handlePriceListChange("penaltyPerM2", Number.parseFloat(e.target.value) || 0)}
-                  />
+                  <div className="flex">
+                    <input
+                      type="text"
+                      className="form-input rounded-r-none"
+                      placeholder="Unesite cena penala za kašnjenje po kvadratu stana"
+                      value={buildingData.priceList.penaltyPerM2}
+                      onChange={e => handlePriceListChange("penaltyPerM2", Number.parseFloat(e.target.value) || 0)}
+                    />
+                    <div className="flex items-center justify-center border border-[#e0e6ed] bg-[#eee] px-3 font-semibold rounded-r-md">€</div>
+                  </div>
                   {errors.penaltyPerM2 && (
                     <p className="text-danger text-sm mt-1">{errors.penaltyPerM2}</p>
                   )}
                 </div>
-              </>
+                <div className={`col-span-1 ${errors.garagePrice && "has-error"}`}>
+                  <label className="form-label">Cena garažnog mesta (€):</label>
+                  <div className="flex">
+                    <input
+                      type="text"
+                      className="form-input rounded-r-none"
+                      placeholder="Unesite cena penala za kašnjenje po kvadratu stana"
+                      value={buildingData.priceList.garagePrice}
+                      onChange={e => handlePriceListChange("garagePrice", Number.parseFloat(e.target.value) || 0)}
+                    />
+                    <div className="flex items-center justify-center border border-[#e0e6ed] bg-[#eee] px-3 font-semibold rounded-r-md">€</div>
+                  </div>
+                  {errors.garagePrice && (
+                    <p className="text-danger text-sm mt-1">{errors.garagePrice}</p>
+                  )}
+                </div>
+              </div>
             )}
 
             <div className="sm:col-span-4 col-span-1 mt-6">
@@ -417,39 +447,75 @@ export default function CreateBuildingPage({ building }: Props) {
           <SetBuildingApartments floorCount={buildingData.floorCount} buildingApartments={apartments} setBuildingApartments={setApartments} />
         </>
       )}
+      {step === 3 && (
+        <>
+          <SetBuildingGarages garagesCount={buildingData.garageSpotCount} builindgGarages={garages} setBuildingGarages={setGarages} apartments={apartments} />
+        </>
+      )}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-5 mt-10">
-        {step === 2
-          ? (
-              <div className="col-span-2 sm:col-span-4 grid grid-cols-2 gap-5 sm:grid-cols-4">
-                <button className="btn btn-danger" onClick={() => setStep(1)} disabled={loading}>Nazad</button>
-                <button
-                  className="btn btn-primary w-full sm:col-start-4"
-                  onClick={handleBuildingCreate}
-                  disabled={loading}
-                >
-                  {loading
-                    ? (
-                        <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                      )
-                    : (
-                        "+ Dodaj"
-                      )}
-                </button>
-              </div>
-            )
-          : building
-            ? (
-                <button className="btn btn-primary col-span-2 sm:col-span-4" onClick={handleBuildingEdit} disabled={loading}>
-                  {loading
-                    ? (
-                        <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                      )
-                    : (
-                        "Izmeni"
-                      )}
-                </button>
-              )
-            : <button className="btn btn-primary sm:col-start-4" onClick={goNextStep}>Dalje</button>}
+        {(step === 2 || step === 3) && (
+          <button
+            className="btn btn-danger col-span-1 sm:col-span-1"
+            onClick={() => setStep(step - 1)}
+            disabled={loading}
+          >
+            Nazad
+          </button>
+        )}
+
+        {/* Step-specific actions */}
+        {step === 1 && (
+          <button
+            className="btn btn-primary sm:col-start-4"
+            onClick={goNextStep}
+            disabled={loading}
+          >
+            Dalje
+          </button>
+        )}
+
+        {step === 2 && (
+          <button
+            className="btn btn-primary sm:col-start-4"
+            onClick={goNextStep}
+            disabled={loading}
+          >
+            Dalje
+          </button>
+        )}
+
+        {step === 3 && (
+          <button
+            className="btn btn-primary w-full sm:col-start-4"
+            onClick={handleBuildingCreate}
+            disabled={loading}
+          >
+            {loading
+              ? (
+                  <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                )
+              : (
+                  "Završi"
+                )}
+          </button>
+        )}
+
+        {/* Edit mode case */}
+        {building && step !== 3 && (
+          <button
+            className="btn btn-primary col-span-2 sm:col-span-4"
+            onClick={handleBuildingEdit}
+            disabled={loading}
+          >
+            {loading
+              ? (
+                  <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                )
+              : (
+                  "Izmeni"
+                )}
+          </button>
+        )}
       </div>
     </div>
   );

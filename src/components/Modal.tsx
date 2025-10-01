@@ -11,6 +11,7 @@ interface ModalProps {
   confirmText?: string;
   closeText?: string;
   loading?: boolean;
+  disabled?: boolean;
   footer?: boolean;
   children: ReactNode;
   size?: string;
@@ -24,6 +25,7 @@ export default function Modal({
   confirmText = "Potvrdi",
   closeText = "Otkaži",
   loading = false,
+  disabled = false,
   footer = true,
   size = "md",
   children,
@@ -97,7 +99,7 @@ export default function Modal({
                         type="button"
                         className="btn btn-primary"
                         onClick={onConfirm}
-                        disabled={loading}
+                        disabled={loading || disabled}
                       >
                         {loading
                           ? (

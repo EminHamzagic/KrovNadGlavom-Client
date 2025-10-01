@@ -8,13 +8,16 @@ export async function createCompany(
   const { data } = await apiClient.post<string>(`${API_URL}/ConstructionCompanies`, createData);
   return data;
 }
+
 export async function getCompany(id: string): Promise<Company> {
   const { data } = await apiClient.get<Company>(`${API_URL}/ConstructionCompanies/${id}`);
   return data;
 }
+
 export async function updateCompany(id: string, updateData: CompanyToUpdate): Promise<void> {
   await apiClient.put(`${API_URL}/ConstructionCompanies/${id}`, updateData);
 }
+
 export async function uploadCompanyLogo(
   logoData: LogoUpload,
 ): Promise<string> {

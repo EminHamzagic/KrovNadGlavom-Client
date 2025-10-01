@@ -133,6 +133,23 @@ export default function FilterOptions({
             </select>
           </div>
 
+          {/* Sort property */}
+          <div>
+            <label className="block text-sm font-medium mb-1">Sortiraj po</label>
+            <select
+              value={filters.sortProperty}
+              onChange={e => handleChange("sortProperty", e.target.value)}
+              className="form-input w-full"
+            >
+              <option value="">Izaberite svojstvo sortiranja</option>
+              <option value="Area">Površina</option>
+              <option value="RoomCount">Broj soba</option>
+              <option value="BalconyCount">Broj terasa</option>
+              <option value="Floor">Spart</option>
+              <option value="Orientation">Orijentacija</option>
+            </select>
+          </div>
+
           {/* Sort type */}
           <div>
             <label className="block text-sm font-medium mb-1">Tip sortiranja</label>
@@ -143,6 +160,25 @@ export default function FilterOptions({
             >
               <option value="asc">Rastuće</option>
               <option value="desc">Opadajuće</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">Garaža</label>
+            <select
+              value={filters.withGarage === null ? "all" : (filters.withGarage ?? false).toString()}
+              onChange={(e) => {
+                const value = e.target.value;
+                handleChange(
+                  "withGarage",
+                  value === "all" ? null : value === "true",
+                );
+              }}
+              className="form-input w-full"
+            >
+              <option value="all">Sve</option>
+              <option value="true">Samo sa garažom</option>
+              <option value="false">Samo bez garaže</option>
             </select>
           </div>
         </div>
