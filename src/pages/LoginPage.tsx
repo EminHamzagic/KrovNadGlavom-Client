@@ -116,7 +116,7 @@ export default function LoginPage() {
               <div className="flex items-center justify-between">
                 <label className="text-sm/6 font-medium">Lozinka</label>
                 <div className="text-sm">
-                  <a href="#" tabIndex={-1} className="font-semibold text-primary-dark-light hover:text-primary transition duration-300">Zaboravili ste lozinku?</a>
+                  <a href="/request-password-reset" tabIndex={-1} className="font-semibold text-primary-dark-light hover:text-primary transition duration-300">Zaboravili ste lozinku?</a>
                 </div>
               </div>
               <div className="mt-2 relative">

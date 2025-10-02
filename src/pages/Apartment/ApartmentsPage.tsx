@@ -23,6 +23,7 @@ export default function ApartmentsPage() {
     balconyCount: 0,
     floor: 0,
     orientation: "",
+    withGarage: null,
   });
   const [loading, setLoading] = useState<boolean>(false);
   const [totalPages, setTotalPages] = useState<number>(1);
@@ -79,6 +80,7 @@ export default function ApartmentsPage() {
       balconyCount: 0,
       floor: 0,
       orientation: "",
+      withGarage: null,
     });
   };
 

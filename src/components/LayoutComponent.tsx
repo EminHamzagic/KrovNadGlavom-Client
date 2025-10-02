@@ -2,8 +2,9 @@ import { Outlet } from "react-router";
 import Header from "./Header";
 import { useContext, useState } from "react";
 import { UserContext } from "../context/UserContext";
-import { Bell, Menu } from "lucide-react";
+import { Menu } from "lucide-react";
 import Breadcrumbs from "./Breadcrumbs";
+import NotificationsComponent from "./NotificationsComponent";
 
 export default function LayoutComponent() {
   const { user } = useContext(UserContext);
@@ -25,9 +26,7 @@ export default function LayoutComponent() {
           </button>
 
           <div className="ml-auto flex items-center">
-            <div className="w-10 h-10 rounded-full hover:bg-gray-300 flex items-center justify-center transition duration-300 mr-2 cursor-pointer">
-              <Bell size={20} />
-            </div>
+            <NotificationsComponent />
             <img
               className="w-10 h-10 rounded-full cursor-pointer"
               src={

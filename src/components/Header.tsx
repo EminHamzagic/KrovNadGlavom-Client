@@ -25,7 +25,7 @@ export default function Header({
     <>
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-40 z-20 md:hidden"
+          className="fixed inset-0 bg-black bg-opacity-40 z-20 md:hidden text-gray-700"
           onClick={() => setSidebarOpen(false)}
         />
       )}

@@ -27,13 +27,16 @@ export default function ApartmentBuyPage() {
   const navigate = useNavigate();
 
   const getDiscountPrice = (data: Apartment): number => {
+    let priceLoc = data.area * (data.building.priceList?.pricePerM2 ?? 1);
+    if (data.garages && data.garages.length > 0) {
+      data.garages.map(() => priceLoc += (data.building.priceList?.garagePrice ?? 0));
+    }
     if (data.discountRequest && data.discountRequest.status === StatusEnum.Approved) {
-      const price = data.area * (data.building.priceList?.pricePerM2 ?? 1);
-      const newPrice = price - price * ((data.discountRequest?.percentage ?? 1) / 100);
+      const newPrice = priceLoc - priceLoc * ((data.discountRequest?.percentage ?? 1) / 100);
       return Math.floor(newPrice);
     }
     else {
-      return data.area * (data.building.priceList?.pricePerM2 ?? 1);
+      return priceLoc;
     }
   };
 

@@ -46,3 +46,12 @@ export interface UserAgencyFollowToAdd {
   userId: string;
   agencyId: string;
 }
+
+export interface Notification {
+  id: string;
+  userId: string;
+  label: string;
+  title: string;
+  message: string;
+  createdAt: string;
+}
