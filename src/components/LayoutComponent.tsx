@@ -1,4 +1,4 @@
-import { Outlet } from "react-router";
+import { Link, Outlet } from "react-router";
 import Header from "./Header";
 import { useContext, useState } from "react";
 import { UserContext } from "../context/UserContext";
@@ -27,14 +27,16 @@ export default function LayoutComponent() {
 
           <div className="ml-auto flex items-center">
             <NotificationsComponent />
-            <img
-              className="w-10 h-10 rounded-full cursor-pointer"
-              src={
-                user.imageUrl
-                ?? "https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small_2x/default-avatar-icon-of-social-media-user-vector.jpg"
-              }
-              alt="avatar"
-            />
+            <Link to="/profile">
+              <img
+                className="w-10 h-10 rounded-full cursor-pointer hover:ring-2 hover:ring-blue-500 transition"
+                src={
+                  user.imageUrl
+                  ?? "https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small_2x/default-avatar-icon-of-social-media-user-vector.jpg"
+                }
+                alt="avatar"
+              />
+            </Link>
           </div>
         </div>
         <div className="p-6 flex-1">

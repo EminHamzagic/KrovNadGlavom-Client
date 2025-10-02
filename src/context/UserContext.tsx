@@ -12,6 +12,7 @@ interface UserContextType {
   getId: () => string | number | null;
   getUserType: () => string;
   user: User;
+  setUser: (user: User) => void;
 }
 
 interface UserContextProviderProps {
@@ -82,6 +83,7 @@ export default function UserContextProvider({ children }: UserContextProviderPro
         getId,
         getUserType,
         user,
+        setUser,
       }}
     >
       {children}
