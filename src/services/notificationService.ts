@@ -9,6 +9,13 @@ export async function getUserNotifications(
   return data;
 }
 
+export async function getUserNotificationCount(
+  userId: string,
+): Promise<number> {
+  const { data } = await apiClient.get<number>(`${API_URL}/Notifications/${userId}/count`);
+  return data;
+}
+
 export async function deleteUserNotification(
   notificationId: string,
 ): Promise<boolean> {

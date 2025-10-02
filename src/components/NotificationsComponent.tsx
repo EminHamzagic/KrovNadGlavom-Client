@@ -1,19 +1,38 @@
-import { Bell, CheckCircle, DollarSign, FileText, ShoppingCart, Tag, X } from "lucide-react";
-import { useContext, useState } from "react";
+import { Bell, CheckCircle, DollarSign, FileText, MessageCircleQuestionMark, ShoppingCart, Tag, X } from "lucide-react";
+import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../context/UserContext";
 import { handleError } from "../utils/handleError";
 import Modal from "./Modal";
 import clsx from "clsx";
 import type { Notification } from "../types/user";
-import { deleteUserNotification, getUserNotifications } from "../services/notificationService";
+import { deleteUserNotification, getUserNotificationCount, getUserNotifications } from "../services/notificationService";
 
 export default function NotificationsComponent() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [notificationsCount, setNotificationsCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [selected, setSelected] = useState<Notification | null>(null);
 
   const { user } = useContext(UserContext);
+
+  const fetchNotificationsCount = async () => {
+    try {
+      setLoading(true);
+      const data = await getUserNotificationCount(user.id);
+      setNotificationsCount(data);
+    }
+    catch (err) {
+      handleError(err);
+    }
+    finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchNotificationsCount();
+  }, []);
 
   const fetchNotifications = async () => {
     try {
@@ -40,6 +59,7 @@ export default function NotificationsComponent() {
     try {
       await deleteUserNotification(id);
       setNotifications(prev => prev.filter(n => n.id !== id));
+      setNotificationsCount(notificationsCount - 1);
     }
     catch (err) {
       handleError(err);
@@ -75,6 +95,8 @@ export default function NotificationsComponent() {
         return <ShoppingCart size={16} />;
       case "Zahtev":
         return <CheckCircle size={16} />;
+      case "Obaveštenje":
+        return <MessageCircleQuestionMark size={16} />;
       default:
         return <FileText size={16} />;
     }
@@ -83,10 +105,12 @@ export default function NotificationsComponent() {
   return (
     <div className="relative">
       <div
-        className="w-10 h-10 rounded-full hover:bg-gray-300 flex items-center justify-center transition duration-300 mr-2 cursor-pointer"
+        className="w-10 h-10 rounded-full hover:bg-gray-300 flex items-center justify-center transition duration-300 mr-2 cursor-pointer relative"
         onClick={handleBellClick}
       >
         <Bell size={20} />
+
+        {(notificationsCount !== 0 && !isDropdownOpen) && <div className="absolute -top-1 -right-1 bg-red-600 rounded-full text-white text-xs w-6 h-6 flex items-center justify-center">{notificationsCount > 9 ? "9+" : notificationsCount}</div>}
       </div>
 
       {isDropdownOpen && (
