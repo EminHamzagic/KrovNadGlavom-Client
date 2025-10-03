@@ -36,6 +36,18 @@ export interface UserToAdd {
   agencyId?: string;
 }
 
+export interface UserToUpdate {
+  name: string;
+  lastname: string;
+  username: string;
+}
+
+export interface UserChangePassword {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
 export interface UserAgencyFollow {
   id: string;
   userId: string;
