@@ -26,6 +26,7 @@ import ReservationsPage from "./pages/ReservationsPage";
 import VerifyEmailPage from "./pages/Auth/VerifyEmailPage";
 import ResetPasswordPage from "./pages/Auth/ResetPasswordPage";
 import RequestPasswordResetPage from "./pages/Auth/RequestPasswordResetPage";
+import UserProfile from "./pages/UserProfile";
 
 function App() {
   return (
@@ -108,6 +109,17 @@ function App() {
                 element={
                   <RequireRoleRoute roles={["User"]} element={<ReservationsPage />} />
                 }
+              />
+
+              {/* Profile rute */}
+              <Route
+                path="/profile"
+                element={(
+                  <RequireRoleRoute
+                    roles={["User", "Company", "Agency", "Admin"]}
+                    element={<UserProfile />}
+                  />
+                )}
               />
 
               {/* Stanovi(Apartments) rute */}
