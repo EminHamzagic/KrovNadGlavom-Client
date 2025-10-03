@@ -12,7 +12,7 @@ interface UserContextType {
   getId: () => string | number | null;
   getUserType: () => string;
   user: User;
-  setUser: (user: User) => void;
+  updateLocalUser: (user: User) => void;
 }
 
 interface UserContextProviderProps {
@@ -72,6 +72,12 @@ export default function UserContextProvider({ children }: UserContextProviderPro
     }
   };
 
+  const updateLocalUser = (updatedUser: User) => {
+    const updatedData = { ...user, ...updatedUser };
+    setUser(updatedData);
+    Cookies.set("user", JSON.stringify(updatedData), { expires: 2 / 24 });
+  };
+
   return (
     <UserContext.Provider
       value={{
@@ -83,7 +89,7 @@ export default function UserContextProvider({ children }: UserContextProviderPro
         getId,
         getUserType,
         user,
-        setUser,
+        updateLocalUser,
       }}
     >
       {children}

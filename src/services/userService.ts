@@ -46,7 +46,7 @@ export async function uploadUserPfp(logoData: LogoUpload): Promise<string> {
 }
 
 // CHANGE PASSWORD
-export async function changePassword(userId: string, passwordData: UserChangePassword): Promise<boolean> {
+export async function changePassword(passwordData: UserChangePassword): Promise<boolean> {
   const { data } = await apiClient.put<{ success: boolean }>(
     `${API_URL}/Users/change-password`,
     {

@@ -29,7 +29,7 @@ export default function LayoutComponent() {
             <NotificationsComponent />
             <Link to="/profile">
               <img
-                className="w-10 h-10 rounded-full cursor-pointer hover:ring-2 hover:ring-blue-500 transition"
+                className="w-10 h-10 rounded-full object-cover cursor-pointer hover:ring-2 hover:ring-primary transition duration-300"
                 src={
                   user.imageUrl
                   ?? "https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small_2x/default-avatar-icon-of-social-media-user-vector.jpg"

@@ -3,14 +3,14 @@ import type { UserChangePassword, UserToUpdate } from "../types/user";
 import { changePassword, updateUser, uploadUserPfp } from "../services/userService";
 import { handleError } from "../utils/handleError";
 import FullScreenLoader from "../components/FullScreenLoader";
-import { KeyRound, PenLine } from "lucide-react";
+import { Eye, EyeOff, KeyRound, PenLine } from "lucide-react";
 import Modal from "../components/Modal";
 import { PopupType, useToast } from "../hooks/useToast";
 import type { LogoUpload } from "../types/company";
 import { UserContext } from "../context/UserContext";
 
 export default function UserProfile() {
-  const { user, setUser } = useContext(UserContext);
+  const { user, updateLocalUser } = useContext(UserContext);
   // sklonio iz loading setLoading
   const [loading] = useState(false);
   const [loadingModal, setLoadingModal] = useState(false);
@@ -25,6 +25,9 @@ export default function UserProfile() {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageData, setImageData] = useState<LogoUpload | null>(null);
+  const [showCurrent, setShowCurrent] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const { showToast } = useToast();
 
@@ -35,7 +38,6 @@ export default function UserProfile() {
         name: user.name,
         lastname: user.lastname,
         username: user.username,
-        email: user.email,
       });
     }
   }, [user]);
@@ -43,10 +45,7 @@ export default function UserProfile() {
   const handleFileUpload = async (userId: string) => {
     if (imageData) {
       try {
-        const newImageUrl = await uploadUserPfp({ ...imageData, id: userId });
-        const updatedUser = { ...user, imageUrl: newImageUrl };
-        setUser(updatedUser);
-        localStorage.setItem("user", JSON.stringify(updatedUser));
+        await uploadUserPfp({ ...imageData, id: userId });
       }
       catch (err) {
         handleError(err);
@@ -59,12 +58,10 @@ export default function UserProfile() {
       return;
     try {
       setLoadingModal(true);
-      const updatedUser = await updateUser(user.id, editForm);
       await handleFileUpload(user.id);
+      const updatedUser = await updateUser(user.id, editForm);
 
-      const finalUser = { ...updatedUser, imageUrl: imageData ? imagePreview || user.imageUrl : user.imageUrl };
-      setUser(finalUser);
-      localStorage.setItem("user", JSON.stringify(finalUser));
+      updateLocalUser(updatedUser);
 
       showToast(PopupType.Success, "Profil je uspešno ažuriran");
       setIsEditOpen(false);
@@ -82,14 +79,16 @@ export default function UserProfile() {
       showToast(PopupType.Danger, "Lozinke se ne poklapaju");
       return;
     }
-    if (passwordForm.newPassword.length < 6) {
-      showToast(PopupType.Danger, "Lozinka mora imati najmanje 6 karaktera");
+    const passwordRegex
+      = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%.])[A-Za-z\d!@#$%.]{7,}$/;
+    if (!passwordRegex.test(passwordForm.newPassword)) {
+      showToast(PopupType.Danger, "Lozinka mora imati najmanje 7 karaktera, jedno veliko i malo slovo, jedan broj i jedan specijalan znak (!@#$%.)", 8000);
       return;
     }
 
     try {
       setLoadingModal(true);
-      await changePassword(user.id, {
+      await changePassword({
         currentPassword: passwordForm.currentPassword,
         newPassword: passwordForm.newPassword,
         confirmPassword: passwordForm.confirmPassword,
@@ -100,7 +99,6 @@ export default function UserProfile() {
     }
     catch (err) {
       handleError(err);
-      showToast(PopupType.Danger, "Greška pri promeni lozinke");
     }
     finally {
       setLoadingModal(false);
@@ -214,14 +212,9 @@ export default function UserProfile() {
             <input type="text" name="lastname" value={editForm.lastname || ""} onChange={handleInputChange} className="form-input" />
           </div>
 
-          <div className="flex flex-col">
+          <div className="flex flex-col col-span-full">
             <label className="font-bold mb-2">Korisničko ime:</label>
             <input type="text" name="username" value={editForm.username || ""} onChange={handleInputChange} className="form-input" />
-          </div>
-
-          <div className="flex flex-col">
-            <label className="font-bold mb-2">Email:</label>
-            <input type="email" name="email" value={editForm.email || ""} onChange={handleInputChange} className="form-input" />
           </div>
         </div>
       </Modal>
@@ -239,19 +232,73 @@ export default function UserProfile() {
         size="md"
       >
         <div className="flex flex-col gap-4">
+          {/* Current password */}
           <div className="flex flex-col">
             <label className="font-bold mb-2">Trenutna lozinka:</label>
-            <input type="password" name="currentPassword" value={passwordForm.currentPassword} onChange={handlePasswordInputChange} className="form-input" />
+            <div className="relative">
+              <input
+                type={showCurrent ? "text" : "password"}
+                name="currentPassword"
+                placeholder="Unesi staru lozinku"
+                value={passwordForm.currentPassword}
+                onChange={handlePasswordInputChange}
+                className="form-input w-full"
+              />
+              <button
+                type="button"
+                tabIndex={-1}
+                className="absolute inset-y-0 right-2 flex items-center px-2 text-gray-500 cursor-pointer"
+                onClick={() => setShowCurrent(!showCurrent)}
+              >
+                {showCurrent ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
 
+          {/* New password */}
           <div className="flex flex-col">
             <label className="font-bold mb-2">Nova lozinka:</label>
-            <input type="password" name="newPassword" value={passwordForm.newPassword} onChange={handlePasswordInputChange} className="form-input" />
+            <div className="relative">
+              <input
+                type={showNew ? "text" : "password"}
+                name="newPassword"
+                placeholder="Unesi novu lozinku"
+                value={passwordForm.newPassword}
+                onChange={handlePasswordInputChange}
+                className="form-input w-full"
+              />
+              <button
+                type="button"
+                tabIndex={-1}
+                className="absolute inset-y-0 right-2 flex items-center px-2 text-gray-500 cursor-pointer"
+                onClick={() => setShowNew(!showNew)}
+              >
+                {showNew ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
 
+          {/* Confirm new password */}
           <div className="flex flex-col">
             <label className="font-bold mb-2">Potvrdi novu lozinku:</label>
-            <input type="password" name="confirmPassword" value={passwordForm.confirmPassword} onChange={handlePasswordInputChange} className="form-input" />
+            <div className="relative">
+              <input
+                type={showConfirm ? "text" : "password"}
+                name="confirmPassword"
+                placeholder="Potvrdi novu lozinku"
+                value={passwordForm.confirmPassword}
+                onChange={handlePasswordInputChange}
+                className="form-input w-full"
+              />
+              <button
+                type="button"
+                tabIndex={-1}
+                className="absolute inset-y-0 right-2 flex items-center px-2 text-gray-500 cursor-pointer"
+                onClick={() => setShowConfirm(!showConfirm)}
+              >
+                {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
         </div>
       </Modal>

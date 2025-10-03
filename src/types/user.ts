@@ -40,7 +40,6 @@ export interface UserToUpdate {
   name: string;
   lastname: string;
   username: string;
-  email: string;
 }
 
 export interface UserChangePassword {
