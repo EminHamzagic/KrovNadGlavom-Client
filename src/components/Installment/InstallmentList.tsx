@@ -14,9 +14,10 @@ import { formatDate } from "../../utils/dateFormatter";
 interface Props {
   installments: Installment[];
   setReload: Dispatch<SetStateAction<boolean>>;
+  lateCount: number;
 }
 
-export default function InstallmentList({ installments, setReload }: Props) {
+export default function InstallmentList({ installments, setReload, lateCount }: Props) {
   const { getUserType } = useContext(UserContext);
   const [isOpenUpload, setIsOpenUpload] = useState<boolean>(false);
   const [isOpenCheck, setIsOpenCheck] = useState<boolean>(false);
@@ -88,6 +89,11 @@ export default function InstallmentList({ installments, setReload }: Props) {
     <div className="planel shadow-md flex-col flex justify-center bg-white rounded-md p-4 mb-10">
       <div className="flex justify-between items-center mb-10">
         <h1 className="text-3xl">Rate</h1>
+        <p>
+          Broj zakasnelih uplata:
+          {" "}
+          {lateCount}
+        </p>
       </div>
 
       <div className="flex flex-col gap-5">

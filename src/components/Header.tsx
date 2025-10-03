@@ -21,6 +21,15 @@ export default function Header({
   const baseClasses
     = "flex items-center p-3 cursor-pointer transition-all duration-200 rounded-md w-full mb-1";
 
+  const navigateToHome = () => {
+    if (user.role === "User") {
+      navigate("/apartments");
+    }
+    else {
+      navigate("/buildings");
+    }
+  };
+
   return (
     <>
       {sidebarOpen && (
@@ -57,7 +66,7 @@ export default function Header({
           src={logo}
           alt="KrovNad Glavom"
           className="mx-auto h-20 w-auto mb-5 cursor-pointer"
-          onClick={() => navigate("/dashboard")}
+          onClick={navigateToHome}
         />
         <div className="flex flex-col justify-between h-full">
           <div>

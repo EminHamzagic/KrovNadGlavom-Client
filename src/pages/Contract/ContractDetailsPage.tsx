@@ -113,7 +113,7 @@ export default function ContractDetailsPage() {
         </div>
       </div>
 
-      <InstallmentList installments={contract.installments} setReload={setReload} />
+      <InstallmentList installments={contract.installments} setReload={setReload} lateCount={contract.lateCount} />
     </>
   );
 }
