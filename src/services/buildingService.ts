@@ -81,3 +81,23 @@ export async function deleteBuilding(
   const { data } = await apiClient.delete<Building>(`${API_URL}/Buildings/${buildingId}`);
   return data;
 }
+
+export async function getBuildingsPage(
+  parameters: QueryParameters,
+): Promise<PaginatedResult<Building>> {
+  const searchParams = new URLSearchParams();
+
+  Object.entries(parameters).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== "" && value !== 0) {
+      searchParams.append(key, String(value));
+    }
+  });
+
+  const queryString = searchParams.toString();
+  const url = `${API_URL}/Buildings/paginated${queryString ? `?${queryString}` : ""}`;
+
+  const { data, headers } = await apiClient.get<Building[]>(url);
+
+  const pagination = JSON.parse(headers["x-pagination"]);
+  return { data, pagination };
+}

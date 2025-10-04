@@ -25,6 +25,15 @@ export interface User {
   reservation?: Reservation;
 }
 
+export interface User {
+  id: string;
+  name: string;
+  lastname: string;
+  username: string;
+  email: string;
+  role: string;
+}
+
 export interface UserToAdd {
   name: string;
   lastname: string;
@@ -66,4 +75,9 @@ export interface Notification {
   title: string;
   message: string;
   createdAt: string;
+}
+
+export interface UpdateRegStatus {
+  allowed: boolean;
+  reason?: string;
 }

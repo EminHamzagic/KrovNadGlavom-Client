@@ -27,7 +27,7 @@ export default function LayoutComponent() {
 
           <div className="ml-auto flex items-center">
             <NotificationsComponent />
-            <Link to="/profile">
+            <Link to={`/profile/${user.id}`} replace={true}>
               <img
                 className="w-10 h-10 rounded-full object-cover cursor-pointer hover:ring-2 hover:ring-primary transition duration-300"
                 src={

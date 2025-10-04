@@ -194,8 +194,8 @@ export default function AgencyPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {agency.logoUrl && (
-            <div className="flex justify-center mb-7 col-span-full">
-              <img src={agency.logoUrl} alt="Logo" className="w-30 h-30 rounded-full object-cover" />
+            <div className="flex justify-center mb-7 col-span-full w-auto h-full">
+              <img src={agency.logoUrl} alt="Logo" className="w-auto h-50 object-contain" />
             </div>
           )}
           <div className="flex flex-col mb-3">
@@ -267,14 +267,14 @@ export default function AgencyPage() {
             <label className="form-label mb-2">Logo:</label>
             <div
               onClick={handleLogoClick}
-              className="w-34 h-34 rounded-full border-2 border-dashed border-primary flex items-center justify-center cursor-pointer overflow-hidden hover:bg-primary/10 transition"
+              className="w-auto min-h-[200px] rounded-xl border-2 border-dashed border-primary flex items-center justify-center cursor-pointer overflow-hidden hover:bg-primary/10 transition"
             >
               {logoPreview
                 ? (
                     <img
                       src={logoPreview}
                       alt="Logo preview"
-                      className="w-full h-full object-cover"
+                      className="max-w-full max-h-[30vh] object-contain"
                     />
                   )
                 : (
