@@ -109,7 +109,7 @@ export default function SetBuildingApartments({ floorCount, buildingApartments, 
       setBuildingApartments([...buildingApartments, ...newApartments]);
     }
     else {
-      setBuildingApartments([...buildingApartments, apartment]);
+      setBuildingApartments([...buildingApartments, { ...apartment, id: crypto.randomUUID() }]);
     }
 
     setIsOpen(false);

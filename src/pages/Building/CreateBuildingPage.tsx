@@ -221,13 +221,16 @@ export default function CreateBuildingPage({ building }: Props) {
             </div>
             <div className={`col-span-1 sm:col-span-2 ${errors.area && "has-error"}`}>
               <label className="form-label">Površina placa:</label>
-              <input
-                type="text"
-                className="form-input"
-                placeholder="Unesite površinu placa zgrade"
-                value={buildingData.area}
-                onChange={e => handleChange("area", Number.parseFloat(e.target.value) || 0)}
-              />
+              <div className="flex">
+                <input
+                  type="text"
+                  className="form-input rounded-r-none"
+                  placeholder="Unesite površinu placa zgrade"
+                  value={buildingData.area}
+                  onChange={e => handleChange("area", Number.parseFloat(e.target.value) || 0)}
+                />
+                <div className="flex items-center justify-center border border-[#e0e6ed] bg-[#eee] px-3 font-semibold rounded-r-md">m²</div>
+              </div>
               {errors.area && (
                 <p className="text-danger text-sm mt-1">{errors.area}</p>
               )}
@@ -453,7 +456,7 @@ export default function CreateBuildingPage({ building }: Props) {
         </>
       )}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-5 mt-10">
-        {(step === 2 || step === 3) && (
+        {!building && (step === 2 || step === 3) && (
           <button
             className="btn btn-danger col-span-1 sm:col-span-1"
             onClick={() => setStep(step - 1)}
@@ -464,7 +467,7 @@ export default function CreateBuildingPage({ building }: Props) {
         )}
 
         {/* Step-specific actions */}
-        {step === 1 && (
+        {!building && step === 1 && (
           <button
             className="btn btn-primary sm:col-start-4"
             onClick={goNextStep}
@@ -474,7 +477,7 @@ export default function CreateBuildingPage({ building }: Props) {
           </button>
         )}
 
-        {step === 2 && (
+        {!building && step === 2 && (
           <button
             className="btn btn-primary sm:col-start-4"
             onClick={goNextStep}
@@ -484,7 +487,7 @@ export default function CreateBuildingPage({ building }: Props) {
           </button>
         )}
 
-        {step === 3 && (
+        {!building && step === 3 && (
           <button
             className="btn btn-primary w-full sm:col-start-4"
             onClick={handleBuildingCreate}
