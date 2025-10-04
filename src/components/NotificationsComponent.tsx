@@ -57,9 +57,9 @@ export default function NotificationsComponent() {
 
   const handleDelete = async (id: string) => {
     try {
-      await deleteUserNotification(id);
       setNotifications(prev => prev.filter(n => n.id !== id));
       setNotificationsCount(notificationsCount - 1);
+      await deleteUserNotification(id);
     }
     catch (err) {
       handleError(err);
