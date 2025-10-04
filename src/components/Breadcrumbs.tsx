@@ -15,7 +15,7 @@ export default function Breadcrumbs() {
 
   return (
     <nav className="flex items-center text-md text-gray-600 space-x-2 mb-6">
-      <Link to={user.role === "User" ? "/apartments" : "/buildings"} className="flex items-center hover:underline">
+      <Link to={user.role === "Manager" ? "/buildings" : "/apartments"} className="flex items-center hover:underline">
         <Home size={16} />
         {" "}
       </Link>
@@ -23,10 +23,12 @@ export default function Breadcrumbs() {
       {crumbs.map((path, index) => {
         const isLast = index === crumbs.length - 1;
 
-        // Find a matching pattern in breadcrumbConfig
         const matchPattern = Object.keys(breadcrumbConfig).find(pattern =>
           matchPath({ path: pattern, end: true }, path),
         );
+
+        if (!matchPattern && !isLast)
+          return null;
 
         const label = matchPattern ? breadcrumbConfig[matchPattern].label : "Detalji";
 
