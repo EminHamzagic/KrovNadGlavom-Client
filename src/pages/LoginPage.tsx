@@ -43,9 +43,9 @@ export default function LoginPage() {
         setLoginData(data.accessToken ?? "", data.refreshToken ?? "", data);
 
         showToast(PopupType.Success, "Uspešno ste se prijavili");
-        if (data.role === "User")
+        if (data.role === "User" || data.role === "Admin")
           navigate("/apartments");
-        else if (data.role === "Manager")
+        else
           navigate("/buildings");
       }
       catch (err) {
@@ -65,9 +65,9 @@ export default function LoginPage() {
       setLoginData(data.accessToken ?? "", data.refreshToken ?? "", data);
 
       showToast(PopupType.Success, "Uspešno ste se prijavili");
-      if (data.role === "User")
+      if (data.role === "User" || data.role === "Admin")
         navigate("/apartments");
-      else if (data.role === "Manager")
+      else
         navigate("/buildings");
     }
     catch (err) {

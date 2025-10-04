@@ -12,6 +12,7 @@ export interface Contract {
   installmentAmount: number;
   installmentCount: number;
   status: string;
+  lateCount: number;
   installments: Installment[];
   user: User;
   agency: Agency;

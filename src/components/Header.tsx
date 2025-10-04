@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router";
 import logo from "/KrovNadGlavomLogo.png";
-import { Bed, Bookmark, Building, Building2, FileUser, LogOut, MessageSquarePlus, Percent, X } from "lucide-react";
+import { Bed, Bookmark, Building, Building2, FileUser, LayoutDashboard, LogOut, MessageSquarePlus, Percent, X } from "lucide-react";
 import { useContext } from "react";
 import { UserContext } from "../context/UserContext";
 import { RequireRole } from "./Auth/RequireRole";
@@ -20,6 +20,15 @@ export default function Header({
 
   const baseClasses
     = "flex items-center p-3 cursor-pointer transition-all duration-200 rounded-md w-full mb-1";
+
+  const navigateToHome = () => {
+    if (user.role === "User" || user.role === "Admin") {
+      navigate("/apartments");
+    }
+    else {
+      navigate("/buildings");
+    }
+  };
 
   return (
     <>
@@ -57,11 +66,11 @@ export default function Header({
           src={logo}
           alt="KrovNad Glavom"
           className="mx-auto h-20 w-auto mb-5 cursor-pointer"
-          onClick={() => navigate("/dashboard")}
+          onClick={navigateToHome}
         />
         <div className="flex flex-col justify-between h-full">
           <div>
-            <RequireRole roles={["User"]}>
+            <RequireRole roles={["User", "Admin"]}>
               <button
                 onClick={() => {
                   navigate("/apartments");
@@ -118,18 +127,20 @@ export default function Header({
               </button>
             </RequireRole>
 
-            <button
-              onClick={() => {
-                navigate("/discount-requests");
-                setSidebarOpen(false);
-              }}
-              className={`${baseClasses} ${
-                isActive("/discount-requests") ? "bg-gray-200" : "hover:bg-gray-200"
-              }`}
-            >
-              <Percent />
-              <span className="ml-2">Zahtevi za popust</span>
-            </button>
+            <RequireRole roles={["User", "Agency", "Company"]}>
+              <button
+                onClick={() => {
+                  navigate("/discount-requests");
+                  setSidebarOpen(false);
+                }}
+                className={`${baseClasses} ${
+                  isActive("/discount-requests") ? "bg-gray-200" : "hover:bg-gray-200"
+                }`}
+              >
+                <Percent />
+                <span className="ml-2">Zahtevi za popust</span>
+              </button>
+            </RequireRole>
 
             <RequireRole roles={["User", "Agency"]}>
               <button
@@ -190,6 +201,21 @@ export default function Header({
               >
                 <Building2 />
                 <span className="ml-2">Agencija</span>
+              </button>
+            </RequireRole>
+
+            <RequireRole roles={["Admin"]}>
+              <button
+                onClick={() => {
+                  navigate(`/admin`);
+                  setSidebarOpen(false);
+                }}
+                className={`${baseClasses} ${
+                  isActive("/admin") ? "bg-gray-200" : "hover:bg-gray-200"
+                }`}
+              >
+                <LayoutDashboard />
+                <span className="ml-2">Admin</span>
               </button>
             </RequireRole>
             <button

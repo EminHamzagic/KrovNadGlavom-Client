@@ -27,6 +27,7 @@ import VerifyEmailPage from "./pages/Auth/VerifyEmailPage";
 import ResetPasswordPage from "./pages/Auth/ResetPasswordPage";
 import RequestPasswordResetPage from "./pages/Auth/RequestPasswordResetPage";
 import UserProfile from "./pages/UserProfile";
+import AdminPage from "./pages/Admin/AdminPage";
 
 function App() {
   return (
@@ -80,9 +81,7 @@ function App() {
               {/* Agencija rute */}
               <Route
                 path="/agency"
-                element={
-                  <RequireRoleRoute roles={["User"]} element={<AllAgenciesPage />} />
-                }
+                element={<AllAgenciesPage />}
               />
               <Route
                 path="/agency/:agencyId"
@@ -113,7 +112,7 @@ function App() {
 
               {/* Profile rute */}
               <Route
-                path="/profile"
+                path="/profile/:id"
                 element={(
                   <RequireRoleRoute
                     roles={["User", "Company", "Agency", "Admin"]}
@@ -126,7 +125,7 @@ function App() {
               <Route
                 path="/apartments"
                 element={
-                  <RequireRoleRoute roles={["User"]} element={<ApartmentsPage />} />
+                  <RequireRoleRoute roles={["User", "Admin"]} element={<ApartmentsPage />} />
                 }
               />
               <Route
@@ -137,6 +136,14 @@ function App() {
                 path="/apartments/:apartmentId/buy"
                 element={
                   <RequireRoleRoute roles={["User"]} element={<ApartmentBuyPage />} />
+                }
+              />
+
+              {/* Admin rute */}
+              <Route
+                path="/admin"
+                element={
+                  <RequireRoleRoute roles={["Admin"]} element={<AdminPage />} />
                 }
               />
             </Route>

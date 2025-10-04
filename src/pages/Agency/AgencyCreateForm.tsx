@@ -87,7 +87,7 @@ export default function AgencyCreateForm({ registerData, setStep }: Props) {
     try {
       await registerUser({ ...registerData, agencyId });
 
-      showToast(PopupType.Success, "Registracija je bila uspešna. Molimo vas prijavite se");
+      showToast(PopupType.Success, "Registracija je bila uspešna. Poslali smo vam email za verifikaciju profila. Molimo vas verifikuj te profil i sačekajte odobrenje administratora kako bi ste se prijavili. Dobićete email o tome da li je vaš profil odobren.", 12000);
       navigate("/login");
     }
     catch (err) {
@@ -146,14 +146,14 @@ export default function AgencyCreateForm({ registerData, setStep }: Props) {
             <label className="form-label mb-2">Logo:</label>
             <div
               onClick={handleLogoClick}
-              className="w-34 h-34 rounded-full border-2 border-dashed border-primary flex items-center justify-center cursor-pointer overflow-hidden hover:bg-primary/10 transition"
+              className={`${logoPreview ? "w-auto" : "min-w-100"} min-h-[200px] rounded-xl border-2 border-dashed border-primary flex items-center justify-center cursor-pointer overflow-hidden hover:bg-primary/10 transition`}
             >
               {logoPreview
                 ? (
                     <img
                       src={logoPreview}
                       alt="Logo preview"
-                      className="w-full h-full object-cover"
+                      className="max-w-full max-h-[30vh] object-contain"
                     />
                   )
                 : (

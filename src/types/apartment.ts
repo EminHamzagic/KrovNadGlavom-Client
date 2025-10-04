@@ -56,6 +56,7 @@ export interface QueryParameters {
   status?: PaymentStatusEnum;
   orientation?: string;
   withGarage?: boolean | null;
+  isAllowed?: boolean;
 }
 
 export interface PaginationParams {
